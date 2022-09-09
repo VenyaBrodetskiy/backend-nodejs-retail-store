@@ -53,10 +53,40 @@ export class StoreService implements IStoreService {
         });
     }
 
-    // TODO: public getStoreById(id: number): Promise<localStore> {
-    //     return new Promise<localStore>
+    public getStoreById(id: number): Promise<Store> {
+        return new Promise<Store>((resolve, reject) => {
+            const sql: SqlClient = require("msnodesqlv8");
+            const connectionString: string = DB_CONNECTION_STRING;
+            let result: Store;     
+
+            sql.open(connectionString, (connectionError: Error, connection: Connection) => {
+                if (connectionError) {
+                    reject(ErrorHelper.parseError(ErrorCodes.ConnectionError, ErrorMessages.DBConnectionError));
+                }
+                else {
+
+                    connection.query(`${Quaries.storeById} ${id}`, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
+                        if (queryError) {
+                            reject(ErrorHelper.parseError(ErrorCodes.QueryError, ErrorMessages.SQLQueryError));
+                        }
+                        else {
+
+                            if (queryResult !== undefined && queryResult.length === 1) {
+                                result = this.parseLocalStore(queryResult[0]);
+                            }
+                            else if (queryResult !== undefined && queryResult.length === 0) {
+                                // TODO: Not found error
+                            }
+                            
+                            resolve(result);
+                        }
+                    })
+                }
+            })
+
+        })
         
-    // }
+    }
 
     private parseLocalStore(store: localStore) : Store {
         return {

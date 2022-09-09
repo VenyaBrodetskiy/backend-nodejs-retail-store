@@ -46,4 +46,39 @@ async function getAllStores(req: Request, res: Response, next: NextFunction) {
 }
  */
 
-export default {getAllStores};
+
+async function getStoreById(req: Request, res: Response, next: NextFunction) {
+    let id: number = -1; // declare default value, which obviously cannot work
+
+    const sId: string = req.params.id;
+    if (isNaN(Number(sId))) {
+        // TODO: Error handling
+    }
+
+    if (sId !== null && sId !== undefined) {
+        id = parseInt(sId);
+    }
+    else {
+        // TODO: Error handling
+    }
+
+    if (id > 0) {
+        storeService.getStoreById(id)
+            .then((result: Store) => {
+                return res.status(200).json(result);
+            })
+            .catch((error: systemError) => {
+                switch (error.code) {
+                    case ErrorCodes.ConnectionError:
+                        return res.status(408).json(error.message);
+                    case ErrorCodes.QueryError:
+                        return res.status(406).json(error.message);
+                    default:
+                        return res.status(400).json(error.message);
+                }
+
+            })
+    }
+}
+
+export default {getAllStores, getStoreById};

@@ -7,9 +7,7 @@ const router = express.Router();
 // 
 //
 
-router.get('/store/all', controller.getAllStores);
-
-// TODO: get store by id:
-//router.get('/store/all:id', controller.getStoreById);
+router.get('/store', controller.getAllStores);
+router.get('/store/:id', controller.getStoreById);
 
 export default { router }; 
