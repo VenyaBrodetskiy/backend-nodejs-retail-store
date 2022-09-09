@@ -10,7 +10,10 @@ export class ErrorMessages {
 }
 
 export class Quaries {
-    public static allStores: string = "SELECT * FROM stores";
+    public static allStores: string = 
+        `SELECT stores.id, store_name, store_address, opening_date, scale
+        FROM stores
+        INNER JOIN store_scale ON store_scale_id = store_scale.id`
     public static storeById: string = "SELECT * FROM stores WHERE id = ";
 }
 
