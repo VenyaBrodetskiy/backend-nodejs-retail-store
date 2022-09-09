@@ -7,6 +7,7 @@ const storeService: StoreService = new StoreService();
 
 // TODO: ask Ilya. why arrow function? Will it be same if not arrow function
 
+// TODO: ask Ilya why is this function async. It works with regular function (let's remove async key-word for ex.)
 async function getAllStores(req: Request, res: Response, next: NextFunction) {
     storeService.getAllStores()
         .then((result: Store[]) => {
