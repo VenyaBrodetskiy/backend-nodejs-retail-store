@@ -10,8 +10,3 @@ export interface systemError {
     code: number;
     message: string;
 }
-
-export interface whiteBoardType {
-    id: number;
-    type: whiteBoardType;
-}
