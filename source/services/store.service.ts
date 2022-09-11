@@ -1,15 +1,15 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, ErrorCodes, ErrorMessages, Quaries } from "../constants";
-import { newStore, Store } from "../entities";
+import { newStoreType, StoreType } from "../entities";
 import { ErrorHelper } from "../helpers/error.helper";
 
 interface IStoreService {
-    getAllStores(): Promise<Store[]>;
-    getStoreById(id: number): Promise<Store>; 
-    addNewStore(store: Store): Promise<number>;
+    getAllStores(): Promise<StoreType[]>;
+    getStoreById(id: number): Promise<StoreType>; 
+    addNewStore(store: StoreType): Promise<number>;
 }
 
-interface localStore {
+interface localStoreType {
     id: number;
     store_name: string;
     store_address: string;
@@ -19,11 +19,11 @@ interface localStore {
 
 export class StoreService implements IStoreService {
 
-    public getAllStores(): Promise<Store[]> {
-        return new Promise<Store[]>((resolve, reject) => {
+    public getAllStores(): Promise<StoreType[]> {
+        return new Promise<StoreType[]>((resolve, reject) => {
             const sql: SqlClient = require("msnodesqlv8");
             const connectionString: string = DB_CONNECTION_STRING;
-            const result: Store[] = [];          
+            const result: StoreType[] = [];          
             
 
             // TODO: Ask Ilya: can we make this 10-deep nested function somehow easier or more readable?
@@ -33,14 +33,14 @@ export class StoreService implements IStoreService {
                 } 
                 else {
                     
-                    connection.query(Quaries.allStores, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
+                    connection.query(Quaries.allStores, (queryError: Error | undefined, queryResult: localStoreType[] | undefined) => {
                         if (queryError) {
                             reject(ErrorHelper.parseError(ErrorCodes.QueryError, ErrorMessages.SQLQueryError));
                         }
                         else {
                             if (queryResult !== undefined) {
                                 queryResult.forEach(
-                                    (store: localStore) => {
+                                    (store: localStoreType) => {
                                         result.push(this.parseLocalStore(store))
                                     });
                             }
@@ -54,11 +54,11 @@ export class StoreService implements IStoreService {
         });
     }
 
-    public getStoreById(id: number): Promise<Store> {
-        return new Promise<Store>((resolve, reject) => {
+    public getStoreById(id: number): Promise<StoreType> {
+        return new Promise<StoreType>((resolve, reject) => {
             const sql: SqlClient = require("msnodesqlv8");
             const connectionString: string = DB_CONNECTION_STRING;
-            let result: Store;     
+            let result: StoreType;     
 
             sql.open(connectionString, (connectionError: Error, connection: Connection) => {
                 if (connectionError) {
@@ -66,7 +66,7 @@ export class StoreService implements IStoreService {
                 }
                 else {
 
-                    connection.query(`${Quaries.storeById} ${id}`, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
+                    connection.query(`${Quaries.storeById} ${id}`, (queryError: Error | undefined, queryResult: localStoreType[] | undefined) => {
                         if (queryError) {
                             reject(ErrorHelper.parseError(ErrorCodes.QueryError, ErrorMessages.SQLQueryError));
                         }
@@ -89,7 +89,7 @@ export class StoreService implements IStoreService {
         
     }
 
-    public addNewStore(store: newStore): Promise<number> {
+    public addNewStore(store: newStoreType): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             const sql: SqlClient = require("msnodesqlv8");
             const connectionString: string = DB_CONNECTION_STRING;
@@ -122,7 +122,7 @@ export class StoreService implements IStoreService {
         });
     }
 
-    private parseLocalStore(store: localStore) : Store {
+    private parseLocalStore(store: localStoreType) : StoreType {
         return {
             id: store.id,
             name: store.store_name,
@@ -132,7 +132,7 @@ export class StoreService implements IStoreService {
         }
     }
 
-    private parseStoreToDb(store: newStore) : string {
+    private parseStoreToDb(store: newStoreType) : string {
         // @store_name NVARCHAR(50), @store_address NVARCHAR(50), @opening_date DATETIME, @store_scale NVARCHAR(50)
         return `'${store.name}', '${store.address}', '${store.openDate}', '${store.scale}'`;
     }
