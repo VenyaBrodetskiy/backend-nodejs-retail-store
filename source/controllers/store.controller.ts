@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ErrorCodes } from "../constants";
-import { newStore, Store, systemError } from "../entities";
+import { newStoreType, StoreType, systemError } from "../entities";
 import { StoreService } from "../services/store.service";
 
 const storeService: StoreService = new StoreService();
@@ -12,7 +12,7 @@ const storeService: StoreService = new StoreService();
 // TODO: ask Ilya why don't we use res.send(). What's the difference with res.status()
 async function getAllStores(req: Request, res: Response, next: NextFunction) {
     storeService.getAllStores()
-        .then((result: Store[]) => {
+        .then((result: StoreType[]) => {
             return res.status(200).json(result);
         })
         .catch((error: systemError) => {
@@ -66,7 +66,7 @@ async function getStoreById(req: Request, res: Response, next: NextFunction) {
 
     if (id > 0) {
         storeService.getStoreById(id)
-            .then((result: Store) => {
+            .then((result: StoreType) => {
                 return res.status(200).json(result);
             })
             .catch((error: systemError) => {
@@ -86,7 +86,7 @@ async function getStoreById(req: Request, res: Response, next: NextFunction) {
 async function addNewStore(req: Request, res: Response, next: NextFunction) {
     
     // TODO: Ask Ilya - how to check that input is of type newStore??
-    const inputStore: newStore = req.body;    
+    const inputStore: newStoreType = req.body;    
 
     storeService.addNewStore(inputStore)
         .then((store_id: number) => {
