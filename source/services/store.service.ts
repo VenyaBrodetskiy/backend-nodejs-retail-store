@@ -25,8 +25,6 @@ export class StoreService implements IStoreService {
             const connectionString: string = DB_CONNECTION_STRING;
             const result: StoreType[] = [];          
             
-
-            // TODO: Ask Ilya: can we make this 10-deep nested function somehow easier or more readable?
             sql.open(connectionString,  (connectionError: Error, connection: Connection) => {
                 if (connectionError) {
                     reject(ErrorHelper.parseError(ErrorCodes.QueryError, ErrorMessages.DBConnectionError));

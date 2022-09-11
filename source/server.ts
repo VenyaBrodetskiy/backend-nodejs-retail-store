@@ -29,8 +29,6 @@ router.use((req, res, next) => {
 
 /** Routes */
 
-// TODO: Ask Ilya. Why here router.use, not router.get?
-// is my understanding correct, that .use makes CB function work each time ANY request comes to server?
 router.use('/', storeRoutes.router);
 
 //router.use('/demo', demoRoutes.router);
@@ -54,7 +52,7 @@ httpServer.listen(
     });
 
 
-// TODO: ask Ilya. Why do we create http server. we can use same router object from express!! no? Like here
+// JIC seems we can use same router object from express! Like here
 /* const PORT: any = process.env.PORT ?? 7777;
 router.listen(
     PORT,
