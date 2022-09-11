@@ -10,4 +10,6 @@ const router = express.Router();
 router.get('/store', controller.getAllStores);
 router.get('/store/:id', controller.getStoreById);
 
+router.put('/store', controller.addNewStore);
+
 export default { router }; 
