@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { ErrorCodes } from "../constants";
 import { newStoreType, StoreType, systemError } from "../entities";
+import { RequestHelper } from "../helpers/request.helpers";
+import { ResponseHelper } from "../helpers/response.helper";
 import { StoreService } from "../services/store.service";
 
 const storeService: StoreService = new StoreService();
 
-async function getAllStores(req: Request, res: Response, next: NextFunction) {
+const getAllStores = async (req: Request, res: Response, next: NextFunction) => {
     storeService.getAllStores()
         .then((result: StoreType[]) => {
             return res.status(200).json(result);
@@ -23,60 +25,75 @@ async function getAllStores(req: Request, res: Response, next: NextFunction) {
         })
 }
 
-//just in case here is arrow function
-/* const getAllStores = async (req: Request, res: Response, next: NextFunction) => {
-    storeService.getAllStores()
-        .then((result: Store[]) => {
+async function getStoreById(req: Request, res: Response, next: NextFunction) {
+    const numericParamOrError: number | systemError = 
+            RequestHelper.ParseNumericInput(req.params.id);
+    
+    if (typeof numericParamOrError === "number") {
+        if (numericParamOrError > 0) {
+            storeService.getStoreById(numericParamOrError)
+                .then((result: StoreType) => {
+                    return res.status(200).json(result)
+                })
+                .catch((error: systemError) => {
+                    return ResponseHelper.handleError(res, error);
+                })
+        }
+        else {
+            // TODO: Error handling
+        }
+    }
+    else {
+        return ResponseHelper.handleError(res, numericParamOrError);
+    }
+    
+}
+
+// SQL injection made by sending the following as a parameter: <' OR 1=1 -- >
+const getStoreByTitle = async (req: Request, res: Response, next: NextFunction) => {
+    let title: string = req.params.title;
+    
+    storeService.getStoreByTitle(title)
+        .then((result: StoreType[]) => {
             return res.status(200).json(result);
         })
         .catch((error: systemError) => {
-            switch (error.code) {
-                case ErrorCodes.ConnectionError:
-                    return res.status(408).json(error.message);
-                case ErrorCodes.QueryError:
-                    return res.status(406).json(error.message);
-                default:
-                    return res.status(400).json(error.message);
-            }
+            return ResponseHelper.handleError(res, error);
+        });
+};
 
-        })
-}
- */
+const updateStoreById = async (req: Request, res: Response, next: NextFunction) => {
 
+    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(req.params.id);
 
-async function getStoreById(req: Request, res: Response, next: NextFunction) {
-    let id: number = -1; // declare default value, which obviously cannot work
-
-    const sId: string = req.params.id;
-    if (isNaN(Number(sId))) {
-        // TODO: Error handling
-    }
-
-    if (sId !== null && sId !== undefined) {
-        id = parseInt(sId);
+    if (typeof numericParamOrError === "number") {
+        if (numericParamOrError > 0) {
+            const body: StoreType = req.body;
+            const store = {
+                id: numericParamOrError,
+                name: body.name,
+                address: body.address,
+                openDate: body.openDate,
+                scale: body.scale
+            };
+            
+            storeService.updateStoreById(store)
+                .then((result: StoreType) => {
+                    return res.status(200).json(result);
+                })
+                .catch((error: systemError) => {
+                    return ResponseHelper.handleError(res, error);
+                })
+        }
+        else {
+            // TODO: Error handling
+        }
     }
     else {
-        // TODO: Error handling
-    }
+        return ResponseHelper.handleError(res, numericParamOrError);
+    }  
+};
 
-    if (id > 0) {
-        storeService.getStoreById(id)
-            .then((result: StoreType) => {
-                return res.status(200).json(result);
-            })
-            .catch((error: systemError) => {
-                switch (error.code) {
-                    case ErrorCodes.ConnectionError:
-                        return res.status(408).json(error.message);
-                    case ErrorCodes.QueryError:
-                        return res.status(406).json(error.message);
-                    default:
-                        return res.status(400).json(error.message);
-                }
-
-            })
-    }
-}
 
 async function addNewStore(req: Request, res: Response, next: NextFunction) {
     
@@ -100,4 +117,4 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
         })
 }
 
-export default {getAllStores, getStoreById, addNewStore};
+export default {getAllStores, getStoreById, getStoreByTitle, updateStoreById, addNewStore};
