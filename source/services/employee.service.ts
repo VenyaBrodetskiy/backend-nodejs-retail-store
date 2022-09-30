@@ -1,10 +1,9 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, ErrorCodes, ErrorMessages, Quaries } from "../constants";
-import { EmployeeType, newStoreType, StoreType } from "../entities";
-import { ErrorHelper } from "../helpers/error.helper";
+import { DB_CONNECTION_STRING, Quaries } from "../constants";
+import { employeeType, newStoreType, storeType } from "../entities";
 
 interface IEmployeeService {
-    getAllEmployees(): Promise<EmployeeType[]>;
+    getAllEmployees(): Promise<employeeType[]>;
 }
 
 interface localEmployee {
@@ -15,9 +14,9 @@ interface localEmployee {
 }
 
 export class EmployeeService implements IEmployeeService {
-    public getAllEmployees(): Promise<EmployeeType[]> {
-        return new Promise<EmployeeType[]>((resolve, reject) => {
-            const result: EmployeeType[] = [];
+    public getAllEmployees(): Promise<employeeType[]> {
+        return new Promise<employeeType[]>((resolve, reject) => {
+            const result: employeeType[] = [];
 
             // TODO: create logic here
             resolve(result);

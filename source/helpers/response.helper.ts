@@ -1,23 +1,24 @@
 import { Response } from 'express';
-import { ErrorCodes } from '../constants';
+import { AppError } from '../enum';
 import { systemError } from "../entities";
 
 export class ResponseHelper {
 
-    public static handleError(response: Response, error: systemError): Response<any, Record<string, any>> {
+    public static handleError(response: Response, error: systemError, isAuthentication: boolean = false): Response<any, Record<string, any>> {
 
-        switch (error.code) {
-            case ErrorCodes.ConnectionError:
+        switch (error.key) {
+            case AppError.ConnectionError:
                 return response.status(408).json({
                     errorMessage: error.message
                 });
-            case ErrorCodes.QueryError:
-            case ErrorCodes.NonNumericInput:
+            case AppError.QueryError:
+            case AppError.NonNumericInput:
                 return response.status(406).json({
                     errorMessage: error.message
                 })
-            case ErrorCodes.NoData:
-                return response.status(404).json({
+            case AppError.NoData:
+                if (isAuthentication) return response.sendStatus(403)
+                else return response.status(404).json({
                     errorMessage: error.message
                 })
             default:
