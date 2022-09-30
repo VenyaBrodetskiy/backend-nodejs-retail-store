@@ -1,6 +1,6 @@
 import { NON_EXISTING_ID } from "../constants";
 import { systemError } from "../entities";
-import { AppError } from "../enum";
+import { AppError } from "../enums";
 import { ErrorService } from "../services/error.service";
 
 

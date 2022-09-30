@@ -2,7 +2,7 @@ import { SqlClient, Connection, Error } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, Quaries } from "../constants";
 import { entityWithId, newStoreType, storeType, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
-import { Statuses } from '../enum';
+import { Statuses } from '../enums';
 import _ from 'underscore';
 import { ErrorService } from "./error.service";
 import { DateHelper } from "../helpers/date.helpers";

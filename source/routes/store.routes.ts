@@ -3,12 +3,12 @@ import storeController from '../controllers/store.controller';
 import employeeController from '../controllers/employee.controller';
 const router = express.Router();
 
-router.get('/store', storeController.getAllStores);
-router.get('/store/:id', storeController.getStoreById);
-router.get('/store-by-title/:title', storeController.getStoreByTitle);
+router.get('/', storeController.getAllStores);
+router.get('/:id', storeController.getStoreById);
+router.get('/by-title/:title', storeController.getStoreByTitle);
 
-router.put('/store/:id', storeController.updateStoreById);
-router.post('/store', storeController.addNewStore);
+router.put('/:id', storeController.updateStoreById);
+router.post('/', storeController.addNewStore);
 //router.put('/store', storeController.addNewStore);
 
 // router.post('/general/board-types', controller.addBoardType);

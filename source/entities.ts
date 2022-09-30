@@ -1,4 +1,4 @@
-import { AppError, Role } from "./enum";
+import { AppError, Role } from "./enums";
 import { Request } from "express";
 export interface entityWithId{
     id: number;

@@ -2,7 +2,7 @@ import { Connection, SqlClient, Error, Query } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, Quaries } from "../constants";
 import { systemError, entityWithId } from "../entities";
 import { ErrorService } from "../services/error.service";
-import { AppError } from "../enum";
+import { AppError } from "../enums";
 
 export class SqlHelper {
     static sql: SqlClient = require("msnodesqlv8");
