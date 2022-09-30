@@ -1,17 +1,18 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, ErrorCodes, ErrorMessages, Quaries } from "../constants";
-import { newStoreType, StoreType, systemError } from "../entities";
-import { ErrorHelper } from "../helpers/error.helper";
+import { DB_CONNECTION_STRING, Quaries } from "../constants";
+import { entityWithId, newStoreType, storeType, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
 import { Statuses } from '../enum';
 import _ from 'underscore';
+import { ErrorService } from "./error.service";
+import { DateHelper } from "../helpers/date.helpers";
 
 interface IStoreService {
-    getAllStores(): Promise<StoreType[]>;
-    getStoreById(id: number): Promise<StoreType>; 
-    getStoreByTitle(title: string): Promise<StoreType[]>;
-    updateStoreById(store: StoreType): Promise<StoreType>;
-    addNewStore(store: StoreType): Promise<number>;
+    getAllStores(): Promise<storeType[]>;
+    getStoreById(id: number): Promise<storeType>; 
+    getStoreByTitle(title: string): Promise<storeType[]>;
+    updateStoreById(store: storeType): Promise<storeType>;
+    addNewStore(store: storeType): Promise<newStoreType>;
 }
 
 interface localStoreType {
@@ -24,11 +25,15 @@ interface localStoreType {
 
 export class StoreService implements IStoreService {
 
-    public getAllStores(): Promise<StoreType[]> {
-        return new Promise<StoreType[]>((resolve, reject) => {
-            const result: StoreType[] = [];          
+    constructor(private errorService: ErrorService) {
+
+    }
+
+    public getAllStores(): Promise<storeType[]> {
+        return new Promise<storeType[]>((resolve, reject) => {
+            const result: storeType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localStoreType>(Quaries.allStores, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Quaries.allStores, Statuses.Active)
             .then((queryResult: localStoreType[]) => {
                 queryResult.forEach((store: localStoreType) => {
                     result.push(this.parseLocalStore(store))
@@ -39,10 +44,10 @@ export class StoreService implements IStoreService {
         });
     }
 
-    public getStoreById(id: number): Promise<StoreType> {
-        return new Promise<StoreType>((resolve, reject) => {    
+    public getStoreById(id: number): Promise<storeType> {
+        return new Promise<storeType>((resolve, reject) => {    
             
-            SqlHelper.executeQuerySingleResult<localStoreType>(Quaries.StoreById, id)
+            SqlHelper.executeQuerySingleResult<localStoreType>(this.errorService, Quaries.StoreById, id)
             .then((queryResult: localStoreType) => {
                 resolve(this.parseLocalStore(queryResult))
             })
@@ -50,9 +55,9 @@ export class StoreService implements IStoreService {
         });
     }
 
-    public getStoreByTitle(title: string): Promise<StoreType[]> {
-        return new Promise<StoreType[]>((resolve, reject) => {
-            SqlHelper.executeQueryArrayResult<localStoreType>(Quaries.StoreByTitle, `%${title}%`)
+    public getStoreByTitle(title: string): Promise<storeType[]> {
+        return new Promise<storeType[]>((resolve, reject) => {
+            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Quaries.StoreByTitle, `%${title}%`)
                 .then((queryResult: localStoreType[]) => {
                     resolve(_.map(queryResult, (result: localStoreType) => this.parseLocalStore(result)));
                 })
@@ -62,9 +67,12 @@ export class StoreService implements IStoreService {
         });
     }
 
-    public updateStoreById(store: StoreType): Promise<StoreType> {
-        return new Promise<StoreType>((resolve, reject) => {
+    // TODO: add update of STORE RANGE also
+    // TODO: ask Ilya how to update connected tables..
+    public updateStoreById(store: storeType): Promise<storeType> {
+        return new Promise<storeType>((resolve, reject) => {
             SqlHelper.executeQueryNoResult(
+                this.errorService,
                 Quaries.UpdateStoreById, false, 
                 `${store.name}`, 
                 `${store.address}`, 
@@ -77,41 +85,24 @@ export class StoreService implements IStoreService {
         });
     }
 
-    // TODO: refactor acording to Ilya
-    public addNewStore(store: newStoreType): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            const sql: SqlClient = require("msnodesqlv8");
-            const connectionString: string = DB_CONNECTION_STRING;
-            let result_id: number;
+    // TODO: ask Ilya how to add smth to DB if has connected columns
+    public addNewStore(store: storeType): Promise<storeType> {
+        return new Promise<storeType>((resolve, reject) => {
 
-            sql.open(connectionString,  (connectionError: Error, connection: Connection) => {
-                if (connectionError) {
-                    reject(ErrorHelper.createError(ErrorCodes.QueryError, ErrorMessages.DBConnectionError));
-                } 
-                else {
-                    const quareAddStore: string = Quaries.AddNewStore + this.parseStoreToDb(store);
-                    connection.query(quareAddStore, (queryError: Error | undefined, queryResult: number[] | undefined) => {
-                        if (queryError) {
-                            reject(ErrorHelper.createError(ErrorCodes.QueryError, ErrorMessages.SQLQueryError));
-                        }
-                        else {
-                            if (queryResult !== undefined && queryResult.length === 1) {
-                                result_id = queryResult[0];
-                            }
-                            else if (queryResult !== undefined && queryResult.length === 0) {
-                                // TODO: Not found error
-                            }
-                            
-                            resolve(result_id);
-                            
-                        }   
-                    })
-                }
-            });
+            const createDate: string = DateHelper.dateToString(new Date());
+
+            SqlHelper.createNew(
+                this.errorService, 
+                Quaries.AddNewStore + this.parseStoreToDb(store), 
+                store)
+            .then((result: entityWithId) => {
+                resolve(result as storeType);
+            })
+            .catch((error: systemError) => reject(error));
         });
     }
 
-    private parseLocalStore(store: localStoreType) : StoreType {
+    private parseLocalStore(store: localStoreType) : storeType {
         return {
             id: store.id,
             name: store.store_name,

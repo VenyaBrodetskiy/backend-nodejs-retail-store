@@ -8,6 +8,7 @@ router.get('/store/:id', storeController.getStoreById);
 router.get('/store-by-title/:title', storeController.getStoreByTitle);
 
 router.put('/store/:id', storeController.updateStoreById);
+router.post('/store', storeController.addNewStore);
 //router.put('/store', storeController.addNewStore);
 
 // router.post('/general/board-types', controller.addBoardType);

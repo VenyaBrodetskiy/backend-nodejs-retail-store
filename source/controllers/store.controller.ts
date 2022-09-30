@@ -1,38 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import { ErrorCodes } from "../constants";
-import { newStoreType, StoreType, systemError } from "../entities";
+import { ErrorService } from "../services/error.service";
+import { newStoreType, storeType, systemError } from "../entities";
 import { RequestHelper } from "../helpers/request.helpers";
 import { ResponseHelper } from "../helpers/response.helper";
 import { StoreService } from "../services/store.service";
+import { NON_EXISTING_ID } from "../constants";
 
-const storeService: StoreService = new StoreService();
+const errorService: ErrorService = new ErrorService();
+const storeService: StoreService = new StoreService(errorService);
 
 const getAllStores = async (req: Request, res: Response, next: NextFunction) => {
     storeService.getAllStores()
-        .then((result: StoreType[]) => {
+        .then((result: storeType[]) => {
             return res.status(200).json(result);
         })
         .catch((error: systemError) => {
-            switch (error.code) {
-                case ErrorCodes.ConnectionError:
-                    return res.status(408).json(error.message);
-                case ErrorCodes.QueryError:
-                    return res.status(406).json(error.message);
-                default:
-                    return res.status(400).json(error.message);
-            }
-
+            return ResponseHelper.handleError(res, error);
         })
 }
 
 async function getStoreById(req: Request, res: Response, next: NextFunction) {
     const numericParamOrError: number | systemError = 
-            RequestHelper.ParseNumericInput(req.params.id);
+            RequestHelper.ParseNumericInput(errorService, req.params.id);
     
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
             storeService.getStoreById(numericParamOrError)
-                .then((result: StoreType) => {
+                .then((result: storeType) => {
                     return res.status(200).json(result)
                 })
                 .catch((error: systemError) => {
@@ -54,7 +48,7 @@ const getStoreByTitle = async (req: Request, res: Response, next: NextFunction) 
     let title: string = req.params.title;
     
     storeService.getStoreByTitle(title)
-        .then((result: StoreType[]) => {
+        .then((result: storeType[]) => {
             return res.status(200).json(result);
         })
         .catch((error: systemError) => {
@@ -64,11 +58,11 @@ const getStoreByTitle = async (req: Request, res: Response, next: NextFunction) 
 
 const updateStoreById = async (req: Request, res: Response, next: NextFunction) => {
 
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
-            const body: StoreType = req.body;
+            const body: storeType = req.body;
             const store = {
                 id: numericParamOrError,
                 name: body.name,
@@ -78,7 +72,7 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
             };
             
             storeService.updateStoreById(store)
-                .then((result: StoreType) => {
+                .then((result: storeType) => {
                     return res.status(200).json(result);
                 })
                 .catch((error: systemError) => {
@@ -98,22 +92,21 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
 async function addNewStore(req: Request, res: Response, next: NextFunction) {
     
     // TODO: Ask Ilya - how to check that input is of type newStore??
-    const inputStore: newStoreType = req.body;    
+    const body: storeType = req.body;    
+    const inputStore = {
+        id: NON_EXISTING_ID,
+        name: body.name,
+        address: body.address,
+        openDate: body.openDate,
+        scale: body.scale
+    };
 
     storeService.addNewStore(inputStore)
-        .then((store_id: number) => {
-            return res.status(200).json(store_id);
+        .then((result: newStoreType) => {
+            return res.status(200).json(result);
         })
         .catch((error: systemError) => {
-            switch (error.code) {
-                case ErrorCodes.ConnectionError:
-                    return res.status(408).json(error.message);
-                case ErrorCodes.QueryError:
-                    return res.status(406).json(error.message);
-                default:
-                    return res.status(400).json(error.message);
-            }
-
+            return ResponseHelper.handleError(res, error);
         })
 }
 
