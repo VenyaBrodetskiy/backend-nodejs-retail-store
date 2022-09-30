@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AppError } from '../enum';
+import { AppError } from '../enums';
 import { systemError } from "../entities";
 
 export class ResponseHelper {

@@ -3,6 +3,8 @@ import http from 'http';
 import express, { Express } from 'express';
 import morgan from 'morgan';
 import storeRoutes from './routes/store.routes';
+import bcrypt from 'bcryptjs';
+import authenticationRoutes from './routes/authentication.routes';
 
 const router: Express = express();
 
@@ -29,7 +31,9 @@ router.use((req, res, next) => {
 
 /** Routes */
 
-router.use('/', storeRoutes.router);
+router.use('/store', storeRoutes.router);
+router.use('/auth', authenticationRoutes.router);
+// router.use('/user', userRoutes.router);
 
 //router.use('/demo', demoRoutes.router);
 
