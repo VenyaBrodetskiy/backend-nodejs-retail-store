@@ -110,10 +110,33 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
         })
 }
 
+async function deleteStore(req: Request, res: Response, next: NextFunction) {
+    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+
+    if (typeof numericParamOrError === "number") {
+        if (numericParamOrError > 0) {
+            storeService.deleteStore(numericParamOrError, (req as AuthenticatedRequest).userData.userId)
+                .then(() => {
+                    return res.sendStatus(200);
+                })
+                .catch((error: systemError) => {
+                    return ResponseHelper.handleError(res, error);
+                })
+        }
+        else {
+            // TODO: Error handling
+        }
+    }
+    else {
+        return ResponseHelper.handleError(res, numericParamOrError);
+    }
+}
+
 export default {
     getAllStores,
     getStoreById, 
     getStoreByTitle, 
     updateStoreById, 
-    addNewStore
+    addNewStore,
+    deleteStore
 };

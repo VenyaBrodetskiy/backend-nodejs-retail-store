@@ -1,9 +1,10 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, Queries } from "../constants";
 import { employeeType, storeType } from "../entities";
+import { ErrorService } from "./error.service";
 
 interface IEmployeeService {
-    getAllEmployees(): Promise<employeeType[]>;
+    getAll(): Promise<employeeType[]>;
 }
 
 interface localEmployee {
@@ -14,7 +15,14 @@ interface localEmployee {
 }
 
 export class EmployeeService implements IEmployeeService {
-    public getAllEmployees(): Promise<employeeType[]> {
+    
+    // TODO: will it work same?
+    private errorService: ErrorService;
+    constructor(errorService: ErrorService) {
+        this.errorService = errorService;
+    }
+
+    public getAll(): Promise<employeeType[]> {
         return new Promise<employeeType[]>((resolve, reject) => {
             const result: employeeType[] = [];
 

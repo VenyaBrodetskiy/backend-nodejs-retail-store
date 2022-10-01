@@ -13,6 +13,7 @@ interface IStoreService {
     getStoreByTitle(title: string): Promise<storeType[]>;
     updateStoreById(store: storeType, userId: number): Promise<storeType>;
     addNewStore(store: storeType, userId: number): Promise<storeType>;
+    deleteStore(id: number, userId: number): Promise<void>
 }
 
 interface localStoreType {
@@ -33,7 +34,7 @@ export class StoreService implements IStoreService {
         return new Promise<storeType[]>((resolve, reject) => {
             const result: storeType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Queries.allStores, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Queries.AllStores, Statuses.Active)
             .then((queryResult: localStoreType[]) => {
                 queryResult.forEach((store: localStoreType) => {
                     result.push(this.parseLocalStore(store))
@@ -47,7 +48,7 @@ export class StoreService implements IStoreService {
     public getStoreById(id: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {    
             
-            SqlHelper.executeQuerySingleResult<localStoreType>(this.errorService, Queries.StoreById, id)
+            SqlHelper.executeQuerySingleResult<localStoreType>(this.errorService, Queries.StoreById, id, Statuses.Active)
             .then((queryResult: localStoreType) => {
                 resolve(this.parseLocalStore(queryResult))
             })
@@ -98,14 +99,34 @@ export class StoreService implements IStoreService {
             const createDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.createNew(
-                this.errorService, 
-                Queries.AddNewStore + this.parseStoreToDb(store), 
-                store)
+                this.errorService,
+                Queries.AddNewStore, store,
+                store.name, store.address, store.openDate, store.scale,
+                createDate, createDate,
+                userId, userId,
+                Statuses.Active
+            )
             .then((result: entityWithId) => {
                 resolve(result as storeType);
             })
             .catch((error: systemError) => reject(error));
         });
+    }
+
+    public deleteStore(id: number, userId: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const updateDate: Date = new Date();
+
+            SqlHelper.executeQueryNoResult(
+                this.errorService, 
+                Queries.DeleteStore, true, 
+                DateHelper.dateToString(updateDate), userId, Statuses.NotActive,
+                id, Statuses.Active)
+            .then(() => {
+                resolve();
+            })
+            .catch((error: systemError) => reject(error));
+        })
     }
 
     private parseLocalStore(store: localStoreType) : storeType {
@@ -116,10 +137,5 @@ export class StoreService implements IStoreService {
             openDate: store.opening_date,
             scale: store.scale
         }
-    }
-
-    private parseStoreToDb(store: storeType) : string {
-        // @store_name NVARCHAR(50), @store_address NVARCHAR(50), @opening_date DATETIME, @store_scale NVARCHAR(50)
-        return `'${store.name}', '${store.address}', '${store.openDate}', '${store.scale}'`;
     }
 }
