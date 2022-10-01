@@ -30,6 +30,7 @@ export class SqlHelper {
         })
     }
 
+    // TODO: ask Ilya. please explain once again why do we need SingleResult function if we can use ArrayResult? Is it security reasons?
     public static executeQuerySingleResult<T>(errorService: ErrorService, query: string, ...params: (string | number )[]): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             SqlHelper.openConnection(errorService)
@@ -187,6 +188,34 @@ export class SqlHelper {
         })
 
         
+    }
+
+    public static executeSpNoResult(
+            errorService: ErrorService, procedureName: string, 
+            ignoreNoRowsAffected: boolean, ...params: (string | number )[]): Promise<void> {
+        
+        return new Promise<void>((resolve, reject) => {
+            SqlHelper.openConnection(errorService)
+                .then((connection: Connection) => {
+                    const pm: ProcedureManager = connection.procedureMgr();
+                    const q: Query = pm.callproc(procedureName, params, (storedProcError: Error | undefined) => {
+                        if (storedProcError) {
+                            reject(errorService.getError(AppError.QueryError));
+                        }
+                    })
+
+                    // important: q.on('rowcount') works correctly only if set nocount on in DB
+                    q.on('rowcount', (rowCount: number) => {
+                        if (!ignoreNoRowsAffected && (rowCount === 0)) {
+                            reject(errorService.getError(AppError.NoData));
+                            return;
+                        }
+                        resolve();
+                    })
+                })
+                .catch((error:systemError) => reject(error));
+            
+        })
     }
 
     private static treatInsertResult(

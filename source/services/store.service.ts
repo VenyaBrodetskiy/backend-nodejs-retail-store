@@ -1,5 +1,4 @@
-import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, Queries } from "../constants";
+import { Queries } from "../constants";
 import { entityWithId, storeType, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
 import { Statuses } from '../enums';
@@ -69,7 +68,6 @@ export class StoreService implements IStoreService {
     }
 
     // TODO: add update of STORE RANGE also
-    // TODO: ask Ilya how to update connected tables..
     public updateStoreById(store: storeType, userId: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {
             const updateDate: Date = new Date();
@@ -92,7 +90,6 @@ export class StoreService implements IStoreService {
         });
     }
 
-    // TODO: ask Ilya how to add smth to DB if has connected columns
     public addNewStore(store: storeType, userId: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {
 
