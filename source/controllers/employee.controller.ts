@@ -4,14 +4,13 @@ import { EmployeeService } from "../services/employee.service";
 import { ErrorService } from "../services/error.service";
 
 const errorService: ErrorService = new ErrorService();
-// TODO: add errorService inside EmployeeService
-const employeeService: EmployeeService = new EmployeeService();
+const employeeService: EmployeeService = new EmployeeService(errorService);
 
-async function getAllEmployees(req: Request, res: Response, next: NextFunction) {
-    employeeService.getAllEmployees()
+async function getAll(req: Request, res: Response, next: NextFunction) {
+    employeeService.getAll()
         .then((result: employeeType[]) => {
             return res.status(200).json(result)
         })
 }
 
-export default {getAllEmployees};
+export default {getAll};
