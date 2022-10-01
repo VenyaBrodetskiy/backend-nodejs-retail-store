@@ -1,5 +1,5 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, Quaries } from "../constants";
+import { DB_CONNECTION_STRING, Queries } from "../constants";
 import { entityWithId, storeType, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
 import { Statuses } from '../enums';
@@ -33,7 +33,7 @@ export class StoreService implements IStoreService {
         return new Promise<storeType[]>((resolve, reject) => {
             const result: storeType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Quaries.allStores, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Queries.allStores, Statuses.Active)
             .then((queryResult: localStoreType[]) => {
                 queryResult.forEach((store: localStoreType) => {
                     result.push(this.parseLocalStore(store))
@@ -47,7 +47,7 @@ export class StoreService implements IStoreService {
     public getStoreById(id: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {    
             
-            SqlHelper.executeQuerySingleResult<localStoreType>(this.errorService, Quaries.StoreById, id)
+            SqlHelper.executeQuerySingleResult<localStoreType>(this.errorService, Queries.StoreById, id)
             .then((queryResult: localStoreType) => {
                 resolve(this.parseLocalStore(queryResult))
             })
@@ -57,7 +57,7 @@ export class StoreService implements IStoreService {
 
     public getStoreByTitle(title: string): Promise<storeType[]> {
         return new Promise<storeType[]>((resolve, reject) => {
-            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Quaries.StoreByTitle, `%${title}%`)
+            SqlHelper.executeQueryArrayResult<localStoreType>(this.errorService, Queries.StoreByTitle, `%${title}%`)
                 .then((queryResult: localStoreType[]) => {
                     resolve(_.map(queryResult, (result: localStoreType) => this.parseLocalStore(result)));
                 })
@@ -74,7 +74,7 @@ export class StoreService implements IStoreService {
             const updateDate: Date = new Date();
             SqlHelper.executeQueryNoResult(
                 this.errorService,
-                Quaries.UpdateStoreById, false, 
+                Queries.UpdateStoreById, false, 
                 store.name, 
                 store.address, 
                 store.openDate, 
@@ -99,7 +99,7 @@ export class StoreService implements IStoreService {
 
             SqlHelper.createNew(
                 this.errorService, 
-                Quaries.AddNewStore + this.parseStoreToDb(store), 
+                Queries.AddNewStore + this.parseStoreToDb(store), 
                 store)
             .then((result: entityWithId) => {
                 resolve(result as storeType);
