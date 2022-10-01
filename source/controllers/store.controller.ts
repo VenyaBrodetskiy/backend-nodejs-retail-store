@@ -110,4 +110,10 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
         })
 }
 
-export default {getAllStores, getStoreById, getStoreByTitle, updateStoreById, addNewStore};
+export default {
+    getAllStores,
+    getStoreById, 
+    getStoreByTitle, 
+    updateStoreById, 
+    addNewStore
+};

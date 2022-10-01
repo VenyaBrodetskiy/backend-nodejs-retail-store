@@ -1,5 +1,5 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, Quaries } from "../constants";
+import { DB_CONNECTION_STRING, Queries } from "../constants";
 import { employeeType, storeType } from "../entities";
 
 interface IEmployeeService {
