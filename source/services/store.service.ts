@@ -67,7 +67,6 @@ export class StoreService implements IStoreService {
         });
     }
 
-    // TODO: add update of STORE RANGE also
     public updateStoreById(store: storeType, userId: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {
             const updateDate: Date = new Date();
