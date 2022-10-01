@@ -19,6 +19,7 @@ export interface employeeType extends entityWithId{
     firstName: string;
     lastName: string;
     position: string;
+    storeName: string;
 }
 export interface systemError {
     key: AppError

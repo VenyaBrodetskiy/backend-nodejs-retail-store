@@ -125,11 +125,11 @@ export class SqlHelper {
         })
     }
 
-    public static executeStoredProcedure(
-        errorService: ErrorService, procedureName: string, 
-        original: entityWithId, ...params: (string | number)[]): Promise<entityWithId> {
+    public static executeSpCreateNew(
+            errorService: ErrorService, procedureName: string, 
+            original: entityWithId, ...params: (string | number)[]): Promise<entityWithId> {
 
-            return new Promise<entityWithId>((resolve, reject) => {
+        return new Promise<entityWithId>((resolve, reject) => {
             SqlHelper.openConnection(errorService)
                 .then((connection) => {
                     const pm: ProcedureManager = connection.procedureMgr();
@@ -155,6 +155,38 @@ export class SqlHelper {
                     reject(error);
                 })
         })
+    }
+
+    public static executeSpArrayResult<T>(
+            errorService: ErrorService, procedureName: string, 
+            ...params: (string | number)[]
+            ): Promise<T[]> {
+
+        return new Promise<T[]>((resolve, reject) => {
+
+            SqlHelper.openConnection(errorService)
+                .then((connection: Connection) => {
+                    const pm: ProcedureManager = connection.procedureMgr();
+                    pm.callproc(procedureName, params, 
+                        (storProcError: Error | undefined, procResult: T[]| undefined) => {
+                            if (storProcError) {
+                                reject(errorService.getError(AppError.QueryError))
+                            }
+                            else {
+                                if (procResult !== undefined) {
+                                    resolve(procResult);
+                                }
+                                else {
+                                    resolve([]);
+                                }
+                            }
+                        }
+                    )
+                })
+                .catch((error: systemError) => reject(error));
+        })
+
+        
     }
 
     private static treatInsertResult(
