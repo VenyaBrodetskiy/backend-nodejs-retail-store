@@ -19,6 +19,8 @@ export interface employeeType extends entityWithId{
     firstName: string;
     lastName: string;
     position: string;
+}
+export interface employeeOfStore extends employeeType{
     storeName: string;
 }
 export interface systemError {
