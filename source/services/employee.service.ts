@@ -1,17 +1,19 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, Queries } from "../constants";
-import { employeeType, storeType } from "../entities";
+import { DB_CONNECTION_STRING, Queries, StoredProcedures } from "../constants";
+import { employeeType, storeType, systemError } from "../entities";
+import { SqlHelper } from "../helpers/sql.helper";
 import { ErrorService } from "./error.service";
 
 interface IEmployeeService {
-    getAll(): Promise<employeeType[]>;
+    getAll(storeId: number): Promise<employeeType[]>;
 }
 
 interface localEmployee {
     id: number;
     first_name: string;
     last_name: string;
-    position_id: number;
+    position: string;
+    store_name: string;
 }
 
 export class EmployeeService implements IEmployeeService {
@@ -22,13 +24,29 @@ export class EmployeeService implements IEmployeeService {
         this.errorService = errorService;
     }
 
-    public getAll(): Promise<employeeType[]> {
+    public getAll(storeId: number): Promise<employeeType[]> {
         return new Promise<employeeType[]>((resolve, reject) => {
             const result: employeeType[] = [];
 
-            // TODO: create logic here
-            resolve(result);
-            reject();
+            SqlHelper.executeSpArrayResult<localEmployee>(this.errorService, StoredProcedures.AllEmployeesByStore, storeId)
+            .then((queryResult: localEmployee[]) => {
+                queryResult.forEach((employee: localEmployee) => {
+                    result.push(this.parseLocalEmployee(employee))
+                });
+                resolve(result);
+            })
+            .catch((error: systemError) => reject(error))
         })
+        
+    }
+
+    private parseLocalEmployee(employee: localEmployee): employeeType {
+        return {
+            id: employee.id,
+            firstName: employee.first_name,
+            lastName: employee.last_name,
+            position: employee.position,
+            storeName: employee.store_name
+        }
     }
 }
