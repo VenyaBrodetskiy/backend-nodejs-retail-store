@@ -9,10 +9,15 @@ export class Quaries {
         INNER JOIN store_scale ON store_scale_id = store_scale.id`;
     public static StoreById: string = "SELECT * FROM stores WHERE id = ?";
     public static StoreByTitle: string = "SELECT * FROM stores WHERE store_name LIKE ?";
-
-    // TODO: ask Ilya how to update scale (it's in other table)
-    // TODO: need to add possibility to change scale of store also
-    public static UpdateStoreById: string = "UPDATE stores SET store_name = ?, store_address = ?, opening_date = ? WHERE id = ?";
+    public static UpdateStoreById: string = 
+       `UPDATE stores 
+        SET store_name = ?, 
+            store_address = ?, 
+            opening_date = ?, 
+            store_scale_id = ?, 
+            update_date = ?, 
+            update_user_id = ? 
+        WHERE id = ? AND status_id = ?`;
     public static AddNewStore: string = "EXEC sp_add_new_store ";
     // @store_name NVARCHAR(50), @store_address NVARCHAR(50), @opening_date DATETIME, @store_scale NVARCHAR(50)
 

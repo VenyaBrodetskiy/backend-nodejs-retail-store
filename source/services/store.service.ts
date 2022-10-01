@@ -1,6 +1,6 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, Quaries } from "../constants";
-import { entityWithId, newStoreType, storeType, systemError } from "../entities";
+import { entityWithId, storeType, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
 import { Statuses } from '../enums';
 import _ from 'underscore';
@@ -11,8 +11,8 @@ interface IStoreService {
     getAllStores(): Promise<storeType[]>;
     getStoreById(id: number): Promise<storeType>; 
     getStoreByTitle(title: string): Promise<storeType[]>;
-    updateStoreById(store: storeType): Promise<storeType>;
-    addNewStore(store: storeType): Promise<newStoreType>;
+    updateStoreById(store: storeType, userId: number): Promise<storeType>;
+    addNewStore(store: storeType, userId: number): Promise<storeType>;
 }
 
 interface localStoreType {
@@ -20,7 +20,7 @@ interface localStoreType {
     store_name: string;
     store_address: string;
     opening_date: string;
-    scale: string;
+    scale: number;
 }
 
 export class StoreService implements IStoreService {
@@ -69,15 +69,21 @@ export class StoreService implements IStoreService {
 
     // TODO: add update of STORE RANGE also
     // TODO: ask Ilya how to update connected tables..
-    public updateStoreById(store: storeType): Promise<storeType> {
+    public updateStoreById(store: storeType, userId: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {
+            const updateDate: Date = new Date();
             SqlHelper.executeQueryNoResult(
                 this.errorService,
                 Quaries.UpdateStoreById, false, 
-                `${store.name}`, 
-                `${store.address}`, 
-                `${store.openDate}`, 
-                `${store.id}`)
+                store.name, 
+                store.address, 
+                store.openDate, 
+                store.scale,
+                DateHelper.dateToString(updateDate),
+                userId,
+                store.id,
+                Statuses.Active
+                )
             .then(() => {
                 resolve(store);
             })
@@ -86,7 +92,7 @@ export class StoreService implements IStoreService {
     }
 
     // TODO: ask Ilya how to add smth to DB if has connected columns
-    public addNewStore(store: storeType): Promise<storeType> {
+    public addNewStore(store: storeType, userId: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {
 
             const createDate: string = DateHelper.dateToString(new Date());
@@ -112,7 +118,7 @@ export class StoreService implements IStoreService {
         }
     }
 
-    private parseStoreToDb(store: newStoreType) : string {
+    private parseStoreToDb(store: storeType) : string {
         // @store_name NVARCHAR(50), @store_address NVARCHAR(50), @opening_date DATETIME, @store_scale NVARCHAR(50)
         return `'${store.name}', '${store.address}', '${store.openDate}', '${store.scale}'`;
     }
