@@ -1,6 +1,6 @@
 import { SqlClient, Connection, Error } from "msnodesqlv8";
 import { DB_CONNECTION_STRING, Quaries } from "../constants";
-import { employeeType, newStoreType, storeType } from "../entities";
+import { employeeType, storeType } from "../entities";
 
 interface IEmployeeService {
     getAllEmployees(): Promise<employeeType[]>;

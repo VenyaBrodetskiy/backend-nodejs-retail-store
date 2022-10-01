@@ -13,7 +13,7 @@ export interface storeType extends entityWithId{
     name: string;
     address: string;
     openDate: string;
-    scale: string;
+    scale: number;
 }
 export interface employeeType extends entityWithId{
     firstName: string;
@@ -21,12 +21,12 @@ export interface employeeType extends entityWithId{
     position: string;
 }
 
-export interface newStoreType extends entityWithId {
-    name: string;
-    address: string;
-    openDate: string;
-    scale: string;
-}
+// export interface newStoreType extends entityWithId {
+//     name: string;
+//     address: string;
+//     openDate: string;
+//     scale: number;
+// }
 export interface systemError {
     key: AppError
     code: number;

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ErrorService } from "../services/error.service";
-import { newStoreType, storeType, systemError } from "../entities";
+import { AuthenticatedRequest, storeType, systemError } from "../entities";
 import { RequestHelper } from "../helpers/request.helpers";
 import { ResponseHelper } from "../helpers/response.helper";
 import { StoreService } from "../services/store.service";
@@ -21,7 +21,7 @@ const getAllStores = async (req: Request, res: Response, next: NextFunction) => 
 
 async function getStoreById(req: Request, res: Response, next: NextFunction) {
     const numericParamOrError: number | systemError = 
-            RequestHelper.ParseNumericInput(errorService, req.params.id);
+        RequestHelper.ParseNumericInput(errorService, req.params.id);
     
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -71,7 +71,7 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
                 scale: body.scale
             };
             
-            storeService.updateStoreById(store)
+            storeService.updateStoreById(store, (req as AuthenticatedRequest).userData.userId)
                 .then((result: storeType) => {
                     return res.status(200).json(result);
                 })
@@ -101,8 +101,8 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
         scale: body.scale
     };
 
-    storeService.addNewStore(inputStore)
-        .then((result: newStoreType) => {
+    storeService.addNewStore(inputStore, (req as AuthenticatedRequest).userData.userId)
+        .then((result: storeType) => {
             return res.status(200).json(result);
         })
         .catch((error: systemError) => {
