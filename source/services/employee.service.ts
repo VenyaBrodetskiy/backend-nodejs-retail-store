@@ -16,6 +16,9 @@ interface localEmployee {
     position: string;
     store_name: string;
 }
+
+// TODO: not to create repeated code for each employee/product/store services, we can create abstract class 
+// abstract class with basic functionality and extend it for each services
 export class EmployeeService implements IEmployeeService {
     
     // TODO: will it work same?
@@ -89,6 +92,21 @@ export class EmployeeService implements IEmployeeService {
             })
             .catch((error: systemError) => reject(error));
         });
+    }
+
+    public del(id: number, userId: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const updateDate: Date = new Date();
+
+            SqlHelper.executeSpNoResult(
+                this.errorService, 
+                StoredProcedures.DeleteEmployee, true,
+                id, userId)
+            .then(() => {
+                resolve();
+            })
+            .catch((error: systemError) => reject(error));
+        })
     }
 
     private parseLocalEmployee(employee: localEmployee): employeeOfStore {
