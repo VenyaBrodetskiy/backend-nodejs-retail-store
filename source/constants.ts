@@ -66,8 +66,8 @@ export class StoredProcedures {
     public static UpdateEmployee = "sp_update_employee";
     // Create new employee and reference the employee to a store(s) (including position)
     public static CreateEmployee = "sp_add_employee";
-    
     // Delete an employee by id
+    public static DeleteEmployee = "sp_delete_employee";
     // Add employee relation by id of a manager and id of subordinate
     // Delete employees relation by manager id and subordinate id
     // Get all employees positions

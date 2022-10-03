@@ -8,5 +8,6 @@ router.get('/by-store-id/:id', middleware.verifyToken([Role.Administrator, Role.
 router.get('/:id', middleware.verifyToken([Role.Administrator, Role.RegularUser]), employeeController.getOne);
 router.put('/:id', middleware.verifyToken([Role.Administrator, Role.RegularUser]), employeeController.update);
 router.post('/', middleware.verifyToken([Role.Administrator, Role.RegularUser]), employeeController.add);
+router.delete('/:id', middleware.verifyToken([Role.Administrator]), employeeController.del);
 
 export default { router }; 

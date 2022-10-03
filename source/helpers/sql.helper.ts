@@ -30,7 +30,6 @@ export class SqlHelper {
         })
     }
 
-    // TODO: ask Ilya. please explain once again why do we need SingleResult function if we can use ArrayResult? Is it security reasons?
     public static executeQuerySingleResult<T>(errorService: ErrorService, query: string, ...params: (string | number )[]): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             SqlHelper.openConnection(errorService)
@@ -252,7 +251,7 @@ export class SqlHelper {
         else {
             return null;
         }
-        // TODO: ask Ilya. Can we rewrite it like this?
+        // TODO: Yes, we can rewrite like this just in case (Ilya confirmed)
         // if (queryResult !== undefined && queryResult.length === 1) {
         //     return queryResult[0].id;
         // }
