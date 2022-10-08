@@ -6,19 +6,20 @@ import { ResponseHelper } from '../helpers/response.helper';
 import { ErrorService } from '../services/error.service';
 import { UserService } from '../services/user.service';
 import bcrypt from 'bcryptjs';
-import { AppError, Role } from '../enums';
+import { AppError } from '../enums';
 
 const errorService: ErrorService = new ErrorService();
 const userService: UserService = new UserService(errorService);
 
 const updateById = async (req: Request, res: Response, next: NextFunction) => {
 
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
+
+    const body: user = req.body;
+    let inputParamsSupplied: boolean = RequestHelper.checkInputRoles(body.roles);
 
     if (typeof numericParamOrError === "number") {
-        if (numericParamOrError > 0) {
-            const body: user = req.body;
-
+        if (numericParamOrError > 0  && inputParamsSupplied === true) {
             const user = {
                 id: numericParamOrError,
                 firstName: body.firstName,
@@ -35,7 +36,7 @@ const updateById = async (req: Request, res: Response, next: NextFunction) => {
                 })
         }
         else {
-            // TODO: Error handling
+            return ResponseHelper.handleError(res, errorService.getError(AppError.InputParameterNotSupplied));
         }
     }
     else {
@@ -56,14 +57,7 @@ const add = async (req: Request, res: Response, next: NextFunction) => {
         roles: body.roles
     };
 
-    let inputParamsSupplied : boolean = true;
-    for (const role of user.roles) {
-        if (Role[role as RoleType] === undefined) { 
-            inputParamsSupplied = false;
-            break;
-        }
-    }
-    
+    let inputParamsSupplied: boolean = RequestHelper.checkInputRoles(user.roles);
     if (inputParamsSupplied) {
         userService.add(user, (req as AuthenticatedRequest).userData.userId)
             .then((result: user) => {
@@ -87,7 +81,7 @@ const add = async (req: Request, res: Response, next: NextFunction) => {
 
 
 const deleteById = async (req: Request, res: Response, next: NextFunction) => {
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -108,8 +102,6 @@ const deleteById = async (req: Request, res: Response, next: NextFunction) => {
     }
     
 };
-
-
 
 export default { 
     add, updateById, deleteById

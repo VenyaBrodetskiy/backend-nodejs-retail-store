@@ -2,10 +2,9 @@ import { Queries } from '../constants';
 import { entityWithId, RoleType, systemError, user } from '../entities';
 import { SqlHelper } from '../helpers/sql.helper';
 import _ from 'underscore';
-import { AppError, Role, Statuses } from '../enums';
+import { Role, Statuses } from '../enums';
 import { DateHelper } from '../helpers/date.helpers';
 import { ErrorService } from './error.service';
-import { ResponseHelper } from '../helpers/response.helper';
 
 interface IUserService {
     updateById(user: user, userId: number): Promise<user>;
@@ -25,13 +24,30 @@ export class UserService implements IUserService {
 
     public updateById(user: user, userId: number): Promise<user> {
         return new Promise<user>((resolve, reject) => {
-            const updateDate: Date = new Date();
-            SqlHelper.executeQueryNoResult(
-                this.errorService, 
-                Queries.UpdateUserById, false, 
-                user.firstName, user.lastName, 
-                DateHelper.dateToString(updateDate), userId, 
-                user.id, Statuses.Active)
+            const updateDate: string = DateHelper.dateToString(new Date());
+
+            const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(user, updateDate, userId);
+            Promise.all([
+                SqlHelper.executeQueryNoResult(
+                    this.errorService,
+                    Queries.DeleteRolesOfUser, true,
+                    updateDate, userId,
+                    Statuses.NotActive,
+                    user.id, Statuses.Active),
+                SqlHelper.executeQueryNoResult(
+                    this.errorService, 
+                    AddRolesExtended as string, false, 
+                    ...roleParams, 
+                    updateDate, updateDate, 
+                    userId, userId, 
+                    Statuses.Active),
+                SqlHelper.executeQueryNoResult(
+                    this.errorService, 
+                    Queries.UpdateUserById, false, 
+                    user.firstName, user.lastName, 
+                    updateDate, userId, 
+                    user.id, Statuses.Active)
+            ])
             .then(() => {
                 resolve(user);
             })
@@ -52,32 +68,21 @@ export class UserService implements IUserService {
                 userId, userId, 
                 Statuses.Active)
             .then((result: entityWithId) => {
-                const roles: string[] = (result as user).roles;
-                const params: (string | number)[] = [
-                    result.id, Role[(roles[0] as RoleType)], 
-                    createDate, createDate,
-                    userId, userId, Statuses.Active];
-                let AddRolesExtended: string = Queries.AddRolesToUser;
-
-                for (let index = 1; index < roles.length; index++) {
-                    params.push(
-                        result.id, Role[(roles[index] as RoleType)], 
-                        createDate, createDate,
-                        userId, userId, Statuses.Active);
-                    AddRolesExtended += ', (?, ?, ?, ?, ?, ?, ?)'
-                }
+                
+                const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(result as user, createDate, userId);
 
                 SqlHelper.executeQueryNoResult(
                     this.errorService, 
-                    AddRolesExtended, false, 
-                    ...params, 
+                    AddRolesExtended as string, false, 
+                    ...roleParams, 
                     createDate, createDate, 
                     userId, userId, 
                     Statuses.Active)
                 return (result as user);
 
-                // TODO: code below can be refactored to send just 1 request instead of many
-                // TODO: ask Ilya. I can't make correct error handling here due to loop I guess. How can improve?     
+                // TODO: code below was refactored to send just 1 request instead of many
+                // TODO: ask Ilya. I can't make correct error handling here due to loop I guess. How can improve? 
+                // probably in future will need to use Promises inside loops..    
                 /* 
                 for (const role of roles) {                   
                     SqlHelper.executeQueryNoResult(
@@ -128,4 +133,23 @@ export class UserService implements IUserService {
         });
     }
 
+    private prepareQueryToAddRoles(user: user, createDate: string, userId: number): (string | (string | number)[])[] {
+        
+        const roles: string[] = user.roles;
+        const params: (string | number)[] = [
+            user.id, Role[(roles[0] as RoleType)], 
+            createDate, createDate,
+            userId, userId, Statuses.Active];
+        let AddRolesExtended: string = Queries.AddRolesToUser;
+
+        for (let index = 1; index < roles.length; index++) {
+            params.push(
+                user.id, Role[(roles[index] as RoleType)], 
+                createDate, createDate,
+                userId, userId, Statuses.Active);
+            AddRolesExtended += ', (?, ?, ?, ?, ?, ?, ?)'
+        }
+
+        return [AddRolesExtended, params];
+    }
 }
