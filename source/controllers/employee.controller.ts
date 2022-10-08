@@ -11,7 +11,7 @@ const employeeService: EmployeeService = new EmployeeService(errorService);
 
 async function getAll(req: Request, res: Response, next: NextFunction) {
     const numericParamOrError: number | systemError = 
-        RequestHelper.ParseNumericInput(errorService, req.params.id);
+        RequestHelper.parseNumericInput(errorService, req.params.id);
     
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -35,7 +35,7 @@ async function getAll(req: Request, res: Response, next: NextFunction) {
 // TODO: very similar to getArray. refactor
 async function getOne(req: Request, res: Response, next: NextFunction) {
     const numericParamOrError: number | systemError = 
-        RequestHelper.ParseNumericInput(errorService, req.params.id);
+        RequestHelper.parseNumericInput(errorService, req.params.id);
     
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -58,7 +58,7 @@ async function getOne(req: Request, res: Response, next: NextFunction) {
 
 const update = async (req: Request, res: Response, next: NextFunction) => {
 
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -108,7 +108,7 @@ async function add(req: Request, res: Response, next: NextFunction) {
 }
 
 async function del(req: Request, res: Response, next: NextFunction) {
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {

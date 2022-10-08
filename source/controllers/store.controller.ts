@@ -21,7 +21,7 @@ const getAllStores = async (req: Request, res: Response, next: NextFunction) => 
 
 async function getStoreById(req: Request, res: Response, next: NextFunction) {
     const numericParamOrError: number | systemError = 
-        RequestHelper.ParseNumericInput(errorService, req.params.id);
+        RequestHelper.parseNumericInput(errorService, req.params.id);
     
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -58,7 +58,7 @@ const getStoreByTitle = async (req: Request, res: Response, next: NextFunction) 
 
 const updateStoreById = async (req: Request, res: Response, next: NextFunction) => {
 
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
@@ -111,7 +111,7 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
 }
 
 async function deleteStore(req: Request, res: Response, next: NextFunction) {
-    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(errorService, req.params.id);
+    const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {

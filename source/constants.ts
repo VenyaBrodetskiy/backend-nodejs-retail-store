@@ -46,10 +46,6 @@ export class Queries {
         UPDATE [user] 
         SET first_name = ?, last_name = ?, update_date = ?, update_user_id = ? 
         WHERE id = ? AND status_id = ?`;
-    public static UpdateRolesOfUser: string = `
-        UPDATE user_to_role
-        SET update_date = ?, update_user_id = ?, status_id = ?
-    `;
     public static AddUser: string = `
         INSERT [user] 
             (first_name, last_name, 
