@@ -3,7 +3,7 @@ import { entityWithId, jwtUserData, systemError } from "../entities";
 import { SqlHelper } from "../helpers/sql.helper";
 import { ErrorService } from "./error.service";
 import bcrypt from 'bcryptjs';
-import { AppError, Role } from "../enums";
+import { AppError, Role, Statuses } from "../enums";
 
 interface localUser extends entityWithId{
     password: string;
@@ -21,7 +21,9 @@ export class AuthenticationService implements IAuthenticationService {
 
     public login(login: string, password: string):Promise<jwtUserData> {
         return new Promise<jwtUserData>((resolve, reject) => {
-            SqlHelper.executeQueryArrayResult<localUser>(this.errorService, Queries.GetUserByLogin, login)
+            SqlHelper.executeQueryArrayResult<localUser>(
+                this.errorService, Queries.GetUserByLogin, login, 
+                Statuses.Active, Statuses.Active)
             .then((user: localUser[]) => {
                 if (bcrypt.compareSync(password, user[0].password)) {
                     let roles : number[] = [];
