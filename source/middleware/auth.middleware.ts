@@ -20,7 +20,8 @@ const verifyToken = (roles: Role[]) => (req: Request, res: Response, next: NextF
     try {
         token = token.substring("Bearer ".length);
         const decoded: string | JwtPayload = jwt.verify(token, TOKEN_SECRET);
-        if (roles.indexOf((decoded as jwtBase).userData.roleId) === -1) {
+        const intersectionRoles: number[] = (decoded as jwtBase).userData.rolesId.filter(role => roles.includes(role)); 
+        if (intersectionRoles.length === 0) {
             return res.sendStatus(401);
         }
         (req as AuthenticatedRequest).userData = (decoded as jwtBase).userData;

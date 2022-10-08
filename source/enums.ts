@@ -3,9 +3,14 @@ export enum Statuses {
     NotActive = 2,
 }
 
+// TODO: refactor to use Roles from DB automatically
 export enum Role {
     Administrator = 1,
-    RegularUser = 2
+    RegularUser,
+    AccessAdministrator,
+    NetworkAdministrator,
+    StoreManager,
+    Cashier
 }
 
 export enum AppError {

@@ -6,8 +6,10 @@ export interface entityWithId{
 export interface user extends entityWithId {
     firstName: string;
     lastName: string;
+    roles: string[];
     login?: string;
     password?: string;
+  
 }
 export interface storeType extends entityWithId{
     name: string;
@@ -40,7 +42,9 @@ export interface authenticationToken {
 }
 
 export interface AuthenticatedRequest extends Request, authenticationToken {}
+
+export type RoleType = keyof typeof Role;
 export interface jwtUserData {
     userId: number;
-    roleId: Role;
+    rolesId: Role[];
 }
