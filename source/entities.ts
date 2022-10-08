@@ -11,20 +11,28 @@ export interface user extends entityWithId {
     password?: string;
   
 }
-export interface storeType extends entityWithId{
+
+export interface roleType extends entityWithId {
+    roleName: string;
+}
+
+export interface storeType extends entityWithId {
     name: string;
     address: string;
     openDate: string;
     scale: number;
 }
+
 export interface employeeType extends entityWithId{
     firstName: string;
     lastName: string;
     position: string;
 }
+
 export interface employeeOfStore extends employeeType{
     storeName: string;
 }
+
 export interface systemError {
     key: AppError
     code: number;
