@@ -21,12 +21,15 @@ export class AuthenticationService implements IAuthenticationService {
 
     public login(login: string, password: string):Promise<jwtUserData> {
         return new Promise<jwtUserData>((resolve, reject) => {
-            SqlHelper.executeQuerySingleResult<localUser>(this.errorService, Queries.GetUserByLogin, login)
-            .then((user: localUser) => {
-                if (bcrypt.compareSync(password, user.password)) {
+            SqlHelper.executeQueryArrayResult<localUser>(this.errorService, Queries.GetUserByLogin, login)
+            .then((user: localUser[]) => {
+                if (bcrypt.compareSync(password, user[0].password)) {
+                    let roles : number[] = [];
+                    // user.forEach(user => roles.push(user.role_id)); // check if is makes same as map
+                    roles = user.map(user => user.role_id);
                     const result: jwtUserData = {
-                        userId: user.id,
-                        roleId: user.role_id
+                        userId: user[0].id,
+                        rolesId: roles
                     }
                     resolve(result);
                 } 
