@@ -104,6 +104,8 @@ export class Queries {
         FROM employee_to_store AS e_s
         INNER JOIN employees AS e ON e.id = e_s.employee_id 
         WHERE e.id = ? AND e.status_id = ? AND e_s.status_id = ?`;
+    public static GetCreatedUserOfStore: string = 'SELECT create_user_id FROM stores WHERE id = ? AND status_id = ?';
+    public static GetCreatedUserOfEmployee: string = 'SELECT create_user_id FROM employees WHERE id = ? AND status_id = ?';
 }
 
 export class StoredProcedures {

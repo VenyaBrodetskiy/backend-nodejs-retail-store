@@ -6,6 +6,7 @@ import { ResponseHelper } from "../helpers/response.helper";
 import { StoreService } from "../services/store.service";
 import { NON_EXISTING_ID } from "../constants";
 import { Role } from "../enums";
+import { AcessHelper } from "../helpers/access.helper";
 
 const errorService: ErrorService = new ErrorService();
 const storeService: StoreService = new StoreService(errorService);
@@ -66,7 +67,7 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
         const userId = (req as AuthenticatedRequest).userData.userId;
         const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
 
-        const isUserHasAccess: boolean = await RequestHelper.isUserHasAccessToStore(
+        const isUserHasAccess: boolean = await AcessHelper.isUserHasAccessToStore(
             errorService, userId, userRoles, storeId)
         
         if (!isUserHasAccess) {
@@ -113,13 +114,6 @@ async function addNewStore(req: Request, res: Response, next: NextFunction) {
         scale: body.scale
     };
 
-    // Adding store is prohibited for SM
-    const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
-    const isUserStoreManager = userRoles.indexOf(Role.StoreManager) > -1;
-    if (isUserStoreManager) {
-        return res.sendStatus(401);
-    }
-
     storeService.addNewStore(inputStore, (req as AuthenticatedRequest).userData.userId)
         .then((result: storeType) => {
             return res.status(200).json(result);
@@ -137,7 +131,7 @@ async function deleteStore(req: Request, res: Response, next: NextFunction) {
         const userId = (req as AuthenticatedRequest).userData.userId;
         const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
 
-        const isUserHasAccess: boolean = await RequestHelper.isUserHasAccessToStore(
+        const isUserHasAccess: boolean = await AcessHelper.isUserHasAccessToStore(
             errorService, userId, userRoles, storeId)
         
         if (!isUserHasAccess) {
