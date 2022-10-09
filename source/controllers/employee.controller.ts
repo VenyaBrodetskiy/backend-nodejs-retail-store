@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { NON_EXISTING_ID } from "../constants";
 import { AuthenticatedRequest, employeeOfStore, employeeType, systemError } from "../entities";
+import { Role } from "../enums";
 import { RequestHelper } from "../helpers/request.helpers";
 import { ResponseHelper } from "../helpers/response.helper";
 import { EmployeeService } from "../services/employee.service";
@@ -61,6 +62,17 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(errorService, req.params.id);
 
     if (typeof numericParamOrError === "number") {
+        const employeeId = numericParamOrError; // just alias for better reading
+        const userId = (req as AuthenticatedRequest).userData.userId;
+        const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
+        
+        const isUserHasAccess: boolean = await RequestHelper.isUserHasAccessToEmployee(
+            errorService, userId, userRoles, employeeId)
+        
+        if (!isUserHasAccess) {
+                return res.sendStatus(401);
+        }
+
         if (numericParamOrError > 0) {
             const body: employeeType = req.body;
             const employee = {

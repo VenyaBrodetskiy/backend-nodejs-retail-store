@@ -38,9 +38,7 @@ export class UserService implements IUserService {
                     this.errorService, 
                     AddRolesExtended as string, false, 
                     ...roleParams, 
-                    updateDate, updateDate, 
-                    userId, userId, 
-                    Statuses.Active),
+                    ),
                 SqlHelper.executeQueryNoResult(
                     this.errorService, 
                     Queries.UpdateUserById, false, 
