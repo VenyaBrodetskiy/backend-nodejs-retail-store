@@ -5,9 +5,9 @@ export enum Statuses {
 
 // TODO: refactor to use Roles from DB automatically
 export enum Role {
-    Administrator = 1,
+    AccessAdministrator = 1,
     RegularUser,
-    AccessAdministrator,
+    AreaManager,
     NetworkAdministrator,
     StoreManager,
     Cashier

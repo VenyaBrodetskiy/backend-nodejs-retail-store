@@ -5,11 +5,11 @@ import middleware from '../middleware/auth.middleware';
 const router = express.Router();
 
 
-router.post('/', middleware.verifyToken([Role.Administrator]), controller.add);
+router.post('/', middleware.verifyToken([Role.AccessAdministrator]), controller.add);
 
-router.put('/:id', middleware.verifyToken([Role.Administrator]), controller.updateById);
+router.put('/:id', middleware.verifyToken([Role.AccessAdministrator]), controller.updateById);
 
-router.delete('/:id', middleware.verifyToken([Role.Administrator]), controller.deleteById);
+router.delete('/:id', middleware.verifyToken([Role.AccessAdministrator]), controller.deleteById);
 
 
 export default { router }; 

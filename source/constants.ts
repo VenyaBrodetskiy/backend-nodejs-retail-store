@@ -92,6 +92,18 @@ export class Queries {
         SET update_date = ?, update_user_id = ?, status_id = ?
         WHERE id = ? AND status_id = ?`;
 
+    // Queries helpers
+    public static GetUserNameById: string = `SELECT first_name, last_name FROM [user] WHERE id = ?`;
+    public static GetStoresByUserName: string = `
+        SELECT store_id
+        FROM employee_to_store AS e_s
+        INNER JOIN employees AS e ON e.id = e_s.employee_id 
+        WHERE e.first_name = ? AND e.last_name = ? AND e.status_id = ? AND e_s.status_id = ?`
+    public static GetStoresOfEmployee: string = `
+        SELECT store_id
+        FROM employee_to_store AS e_s
+        INNER JOIN employees AS e ON e.id = e_s.employee_id 
+        WHERE e.id = ? AND e.status_id = ? AND e_s.status_id = ?`;
 }
 
 export class StoredProcedures {

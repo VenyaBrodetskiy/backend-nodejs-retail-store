@@ -29,7 +29,7 @@ const verifyToken = (roles: Role[]) => (req: Request, res: Response, next: NextF
     catch (err) {
         return res.status(401).send("Invalid Token");
     }
-        return next();
+    return next();
 };
 
 export default { verifyToken }
