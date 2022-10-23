@@ -76,7 +76,7 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
 
         if (storeId > 0) {
             const body: storeType = req.body;
-            const store = {
+            const store: storeType = {
                 id: storeId,
                 name: body.name,
                 address: body.address,
@@ -104,7 +104,6 @@ const updateStoreById = async (req: Request, res: Response, next: NextFunction) 
 
 async function addNewStore(req: Request, res: Response, next: NextFunction) {
     
-    // TODO: Ask Ilya - how to check that input is of type newStore??
     const body: storeType = req.body;    
     const inputStore = {
         id: NON_EXISTING_ID,

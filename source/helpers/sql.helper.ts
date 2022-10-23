@@ -240,24 +240,26 @@ export class SqlHelper {
     }
 
     private static treatInsertResult2(queryResult: entityWithId[] | undefined): number | null {
-        if (queryResult !== undefined) {
-            if (queryResult.length === 1) {
-                return queryResult[0].id;
-            }
-            else {
-                return null;
-            }
-        }
-        else {
-            return null;
-        }
-        // TODO: Yes, we can rewrite like this just in case (Ilya confirmed)
-        // if (queryResult !== undefined && queryResult.length === 1) {
-        //     return queryResult[0].id;
+        
+        // if (queryResult !== undefined) {
+        //     if (queryResult.length === 1) {
+        //         return queryResult[0].id;
+        //     }
+        //     else {
+        //         return null;
+        //     }
         // }
         // else {
         //     return null;
         // }
+        // changed this code to below
+
+        if (queryResult !== undefined && queryResult.length === 1) {
+            return queryResult[0].id;
+        }
+        else {
+            return null;
+        }
     }
 
     private static openConnection(errorService: ErrorService): Promise<Connection> {
