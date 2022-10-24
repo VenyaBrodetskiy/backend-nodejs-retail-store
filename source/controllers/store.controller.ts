@@ -3,7 +3,7 @@ import { ErrorService } from "../services/error.service";
 import { AuthenticatedRequest, storeType, systemError } from "../entities";
 import { RequestHelper } from "../helpers/request.helpers";
 import { ResponseHelper } from "../helpers/response.helper";
-import { StoreService } from "../services/store.service";
+import { StoreService } from "../modules/store/store.service";
 import { NON_EXISTING_ID } from "../constants";
 import { Role } from "../enums";
 import { AcessHelper } from "../helpers/access.helper";
