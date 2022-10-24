@@ -1,10 +1,10 @@
 import express, { Express, Application, Request, Response } from "express";
 import * as http from "http";
 import cors from "cors";
-import { RouteConfig } from "./framework/route.config";
+import { RouteConfig } from "./framework/routes.config";
 // import { UserRoutes } from "./modules/user/user.route";
-// import { StoreRoutes } from "./modules/store/store.route";
-import { AuthenticationRoutes } from "./core/authentication/authentication.route";
+import { StoreRoutes } from "./modules/store/store.routes";
+import { AuthenticationRoutes } from "./core/authentication/authentication.routes";
 import morgan from "morgan";
 
 const routes: Array<RouteConfig> = [];
@@ -27,7 +27,7 @@ const PORT: number = 7777;
 // } 
 
 // routes.push(new UserRoutes(app));
-// routes.push(new StoreRoutes(app));
+routes.push(new StoreRoutes(app));
 routes.push(new AuthenticationRoutes(app));
 
 // app.get("/", (req: Request, res: Response) => {

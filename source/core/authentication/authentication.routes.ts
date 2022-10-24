@@ -1,4 +1,4 @@
-import { RouteConfig } from '../../framework/route.config';
+import { RouteConfig } from '../../framework/routes.config';
 import { Application } from "express"
 import AuthenticationController from "./authentication.controller"
 
