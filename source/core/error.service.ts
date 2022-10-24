@@ -6,7 +6,7 @@ interface IErrorService {
     getError(key: AppError): systemError;
 }
 
-export class ErrorService implements IErrorService {
+class ErrorService implements IErrorService {
     private _error: Dictionary<systemError> = {};
 
     constructor() {
@@ -62,3 +62,5 @@ export class ErrorService implements IErrorService {
     }
 
 }
+
+export default new ErrorService();
