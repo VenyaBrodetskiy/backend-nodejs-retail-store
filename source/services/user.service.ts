@@ -3,7 +3,7 @@ import { entityWithId, RoleType, systemError, user } from '../entities';
 import { SqlHelper } from '../helpers/sql.helper';
 import _ from 'underscore';
 import { Role, Statuses } from '../enums';
-import { DateHelper } from '../helpers/date.helpers';
+import { DateHelper } from '../framework/date.helpers';
 import { ErrorService } from './error.service';
 
 interface IUserService {

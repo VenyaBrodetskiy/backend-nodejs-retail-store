@@ -1,9 +1,9 @@
-import { Queries } from "../constants";
-import { entityWithId, jwtUserData, systemError } from "../entities";
-import { SqlHelper } from "../helpers/sql.helper";
-import { ErrorService } from "./error.service";
 import bcrypt from 'bcryptjs';
-import { AppError, Role, Statuses } from "../enums";
+import { Queries } from '../../constants';
+import { entityWithId, jwtUserData, systemError } from '../../entities';
+import { AppError, Role, Statuses } from '../../enums';
+import { SqlHelper } from '../helpers/sql.helper';
+import ErrorService from "../../core/error.service";
 
 interface localUser extends entityWithId{
     password: string;
@@ -16,13 +16,13 @@ interface IAuthenticationService {
 
 export class AuthenticationService implements IAuthenticationService {
     
-    constructor(private errorService: ErrorService) {
+    constructor() {
     }
 
     public login(login: string, password: string):Promise<jwtUserData> {
         return new Promise<jwtUserData>((resolve, reject) => {
             SqlHelper.executeQueryArrayResult<localUser>(
-                this.errorService, Queries.GetUserByLogin, login, 
+                Queries.GetUserByLogin, login, 
                 Statuses.Active, Statuses.Active)
             .then((user: localUser[]) => {
                 if (bcrypt.compareSync(password, user[0].password)) {
@@ -36,7 +36,7 @@ export class AuthenticationService implements IAuthenticationService {
                     resolve(result);
                 } 
                 else {
-                    reject(this.errorService.getError(AppError.NoData));
+                    reject(ErrorService.getError(AppError.NoData));
                 }
             })
             .catch((error: systemError) => {
@@ -50,6 +50,6 @@ export class AuthenticationService implements IAuthenticationService {
     //     console.log(temp_pass);
     //     console.log(bcrypt.compareSync('password', '$2a$10$nk.AB39zLdPrYLhtyP6o7u93Vk7SmGVTYqgMhh8l6YlQjb8xaLU9u'));
     // }
-
-
 }
+
+export default new AuthenticationService();

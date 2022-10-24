@@ -4,7 +4,7 @@ import { SqlHelper } from "../helpers/sql.helper";
 import { Statuses } from '../enums';
 import _ from 'underscore';
 import { ErrorService } from "./error.service";
-import { DateHelper } from "../helpers/date.helpers";
+import { DateHelper } from "../framework/date.helpers";
 
 interface IStoreService {
     getAllStores(): Promise<storeType[]>;
