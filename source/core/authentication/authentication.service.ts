@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import { Queries } from '../../constants';
-import { entityWithId, jwtUserData, systemError } from '../../entities';
-import { AppError, Role, Statuses } from '../../enums';
+import { Queries } from '../../common/constants';
+import { entityWithId, jwtUserData, systemError } from '../../common/entities';
+import { AppError, Role, Statuses } from '../../common/enums';
 import { SqlHelper } from '../helpers/sql.helper';
 import ErrorService from "../../core/error.service";
 

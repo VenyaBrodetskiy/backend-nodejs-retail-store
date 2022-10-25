@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { TOKEN_SECRET } from "../../constants";
-import { jwtUserData, authenticationToken, systemError } from "../../entities";
+import { TOKEN_SECRET } from "../../common/constants";
+import { jwtUserData, authenticationToken, systemError } from "../../common/entities";
 import { ResponseHelper } from "../helpers/response.helper";
 import AuthenticationService from './authentication.service';
 import jwt from 'jsonwebtoken';

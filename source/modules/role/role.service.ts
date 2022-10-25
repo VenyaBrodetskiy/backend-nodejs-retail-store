@@ -1,9 +1,9 @@
-import { Queries } from "../../constants";
-import { entityWithId, roleType, systemError } from "../../entities";
+import { entityWithId, roleType, systemError } from "../../common/entities";
 import { SqlHelper } from "../../core/helpers/sql.helper";
-import { Statuses } from '../../enums';
+import { Statuses } from '../../common/enums';
 import _ from 'underscore';
 import { DateHelper } from "../../framework/date.helpers";
+import { RoleQueries } from "./role.queries";
 
 interface IRoleService {
     getAll(): Promise<roleType[]>;
@@ -26,7 +26,7 @@ class RoleService implements IRoleService {
         return new Promise<roleType[]>((resolve, reject) => {
             const result: roleType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localRoleType>(Queries.GetRoles, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localRoleType>(RoleQueries.GetRoles, Statuses.Active)
             .then((queryResult: localRoleType[]) => {
                 queryResult.forEach((role: localRoleType) => {
                     result.push(this.parseLocalrole(role))
@@ -41,7 +41,7 @@ class RoleService implements IRoleService {
         return new Promise<roleType>((resolve, reject) => {
             const updateDate: string = DateHelper.dateToString(new Date());
             SqlHelper.executeQueryNoResult(
-                Queries.UpdateRole, false, 
+                RoleQueries.UpdateRole, false, 
                 role.roleName, 
                 updateDate,
                 userId,
@@ -61,7 +61,7 @@ class RoleService implements IRoleService {
             const createDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.createNew(
-                Queries.AddRole, role,
+                RoleQueries.AddRole, role,
                 role.roleName,
                 createDate, createDate,
                 userId, userId,
@@ -79,7 +79,7 @@ class RoleService implements IRoleService {
             const updateDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.executeQueryNoResult(
-                Queries.DeleteRole, true, 
+                RoleQueries.DeleteRole, true, 
                 updateDate, userId, Statuses.NotActive,
                 id, Statuses.Active)
             .then(() => {

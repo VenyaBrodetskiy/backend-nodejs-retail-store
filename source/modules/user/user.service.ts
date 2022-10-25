@@ -1,9 +1,9 @@
-import { Queries } from '../../constants';
-import { entityWithId, RoleType, systemError, user } from '../../entities';
+import { entityWithId, RoleType, systemError, user } from '../../common/entities';
 import { SqlHelper } from '../../core/helpers/sql.helper';
 import _ from 'underscore';
-import { Role, Statuses } from '../../enums';
+import { Role, Statuses } from '../../common/enums';
 import { DateHelper } from '../../framework/date.helpers';
+import { UserQueries } from './user.queries';
 
 interface IUserService {
     updateById(user: user, userId: number): Promise<user>;
@@ -28,7 +28,7 @@ class UserService implements IUserService {
             const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(user, updateDate, userId);
             Promise.all([
                 SqlHelper.executeQueryNoResult(
-                    Queries.DeleteRolesOfUser, true,
+                    UserQueries.DeleteRolesOfUser, true,
                     updateDate, userId,
                     Statuses.NotActive,
                     user.id, Statuses.Active),
@@ -37,7 +37,7 @@ class UserService implements IUserService {
                     ...roleParams, 
                     ),
                 SqlHelper.executeQueryNoResult(
-                    Queries.UpdateUserById, false, 
+                    UserQueries.UpdateUserById, false, 
                     user.firstName, user.lastName, 
                     updateDate, userId, 
                     user.id, Statuses.Active)
@@ -54,7 +54,7 @@ class UserService implements IUserService {
             const createDate: string = DateHelper.dateToString(new Date());
             
             SqlHelper.createNew(
-                Queries.AddUser, user, 
+                UserQueries.AddUser, user, 
                 user.firstName, user.lastName, 
                 user.login as string, user.password as string,  
                 createDate, createDate, 
@@ -103,12 +103,12 @@ class UserService implements IUserService {
             // TODO: revise this const temp user to passed from request (by auth)
             Promise.all([
                 SqlHelper.executeQueryNoResult(
-                    Queries.DeleteUserById, true, 
+                    UserQueries.DeleteUserById, true, 
                     updateDate, userId, 
                     Statuses.NotActive, 
                     id, Statuses.Active),
                 SqlHelper.executeQueryNoResult(
-                    Queries.DeleteRolesOfUser, true,
+                    UserQueries.DeleteRolesOfUser, true,
                     updateDate, userId,
                     Statuses.NotActive,
                     id, Statuses.Active
@@ -130,7 +130,7 @@ class UserService implements IUserService {
             user.id, Role[(roles[0] as RoleType)], 
             createDate, createDate,
             userId, userId, Statuses.Active];
-        let AddRolesExtended: string = Queries.AddRolesToUser;
+        let AddRolesExtended: string = UserQueries.AddRolesToUser;
 
         for (let index = 1; index < roles.length; index++) {
             params.push(
