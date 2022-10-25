@@ -1,9 +1,8 @@
 import { RouteConfig } from '../../framework/routes.config';
-import express, { Application, Request, Response } from "express";
+import { Application } from "express";
+import { Role } from '../../enums';
 import SchoolController from "./store.controller";
 import AuthMiddleware from '../../core/middleware/auth.middleware';
-import { Role } from '../../enums';
-// import AuthMiddleware from '../../core/middleware/auth.middleware'
 
 export class StoreRoutes extends RouteConfig {
     
