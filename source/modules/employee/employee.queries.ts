@@ -1,5 +1,6 @@
 export class StoredProcedures {
-    // Queries for employee management       
+    // Get a list of all employees of all stores (sorted by positions)
+    public static AllEmployees = "sp_get_all_employees";
     // Get a list of all employees by store id
     public static AllEmployeesByStore = "sp_get_employees_by_store";
     // Get an employee by id
@@ -11,6 +12,7 @@ export class StoredProcedures {
     // Delete an employee by id
     public static DeleteEmployee = "sp_delete_employee";
     // Add employee relation by id of a manager and id of subordinate
+    // not implemented..
     // Delete employees relation by manager id and subordinate id
-    // Get all employees positions
+    // not implemented..
 }

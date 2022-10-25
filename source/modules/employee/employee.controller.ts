@@ -12,12 +12,22 @@ class EmployeeController {
     constructor() {}
 
     public getAll(req: Request, res: Response, next: NextFunction) {
+        EmployeeService.getAll()
+            .then((result: employeeOfStore[]) => {
+                return res.status(200).json(result);
+            })
+            .catch((error: systemError) => {
+                return ResponseHelper.handleError(res, error);
+            })
+    }
+    
+    public getAllByStoreId(req: Request, res: Response, next: NextFunction) {
         const numericParamOrError: number | systemError = 
             RequestHelper.parseNumericInput(req.params.id);
         
         if (typeof numericParamOrError === "number") {
             if (numericParamOrError > 0) {
-                EmployeeService.getAll(numericParamOrError)
+                EmployeeService.getAllByStoreId(numericParamOrError)
                     .then((result: employeeOfStore[]) => {
                         return res.status(200).json(result)
                     })
