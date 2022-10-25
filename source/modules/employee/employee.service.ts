@@ -1,9 +1,9 @@
 import { StoredProcedures } from "./employee.queries";
-import { employeeOfStore, employeeType, entityWithId, storeType, systemError } from "../../common/entities";
+import { employeeOfStore, employeeType, entityWithId, systemError } from "../../common/entities";
 import { SqlHelper } from "../../core/helpers/sql.helper";
 
 interface IEmployeeService {
-    getAll(storeId: number): Promise<employeeOfStore[]>;
+    getAllByStoreId(storeId: number): Promise<employeeOfStore[]>;
     getOne(id: number): Promise<employeeOfStore[]>;
     update(employee: employeeType, userId: number): Promise<employeeType>;
 }
@@ -23,7 +23,22 @@ class EmployeeService implements IEmployeeService {
     constructor() {
     }
 
-    public getAll(storeId: number): Promise<employeeOfStore[]> {
+    public getAll(): Promise<employeeOfStore[]> {
+        return new Promise<employeeOfStore[]>((resolve, reject) => {
+            const result: employeeOfStore[] = [];
+
+            SqlHelper.executeSpArrayResult<localEmployee>(StoredProcedures.AllEmployees)
+            .then((queryResult: localEmployee[]) => {
+                queryResult.forEach((localEmployee: localEmployee) => {
+                    result.push(this.parseLocalEmployee(localEmployee));
+                });
+                resolve(result);
+            })
+            .catch((error: systemError) => reject(error));
+        })
+    }
+
+    public getAllByStoreId(storeId: number): Promise<employeeOfStore[]> {
         return new Promise<employeeOfStore[]>((resolve, reject) => {
             const result: employeeOfStore[] = [];
 

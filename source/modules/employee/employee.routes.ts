@@ -12,9 +12,13 @@ export class EmployeeRoutes extends RouteConfig {
 
     configureRoutes() {
         
-        this.app.route(`/employee/by-store-id/:id`).get([
+        this.app.route(`/employee`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.getAll]);
+
+        this.app.route(`/employee/by-store-id/:id`).get([
+            AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
+            EmployeeController.getAllByStoreId]);
             
         this.app.route(`/employee/:id`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
