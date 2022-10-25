@@ -1,10 +1,9 @@
-import { Queries } from '../constants';
-import { entityWithId, RoleType, systemError, user } from '../entities';
-import { SqlHelper } from '../helpers/sql.helper';
+import { Queries } from '../../constants';
+import { entityWithId, RoleType, systemError, user } from '../../entities';
+import { SqlHelper } from '../../core/helpers/sql.helper';
 import _ from 'underscore';
-import { Role, Statuses } from '../enums';
-import { DateHelper } from '../framework/date.helpers';
-import { ErrorService } from './error.service';
+import { Role, Statuses } from '../../enums';
+import { DateHelper } from '../../framework/date.helpers';
 
 interface IUserService {
     updateById(user: user, userId: number): Promise<user>;
@@ -13,7 +12,7 @@ interface IUserService {
 }
 export class UserService implements IUserService {
     
-    constructor(private errorService: ErrorService) {
+    constructor() {
 
     }
 
@@ -29,18 +28,15 @@ export class UserService implements IUserService {
             const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(user, updateDate, userId);
             Promise.all([
                 SqlHelper.executeQueryNoResult(
-                    this.errorService,
                     Queries.DeleteRolesOfUser, true,
                     updateDate, userId,
                     Statuses.NotActive,
                     user.id, Statuses.Active),
                 SqlHelper.executeQueryNoResult(
-                    this.errorService, 
                     AddRolesExtended as string, false, 
                     ...roleParams, 
                     ),
                 SqlHelper.executeQueryNoResult(
-                    this.errorService, 
                     Queries.UpdateUserById, false, 
                     user.firstName, user.lastName, 
                     updateDate, userId, 
@@ -58,7 +54,6 @@ export class UserService implements IUserService {
             const createDate: string = DateHelper.dateToString(new Date());
             
             SqlHelper.createNew(
-                this.errorService, 
                 Queries.AddUser, user, 
                 user.firstName, user.lastName, 
                 user.login as string, user.password as string,  
@@ -70,7 +65,6 @@ export class UserService implements IUserService {
                 const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(result as user, createDate, userId);
 
                 SqlHelper.executeQueryNoResult(
-                    this.errorService, 
                     AddRolesExtended as string, false, 
                     ...roleParams, 
                     createDate, createDate, 
@@ -109,13 +103,11 @@ export class UserService implements IUserService {
             // TODO: revise this const temp user to passed from request (by auth)
             Promise.all([
                 SqlHelper.executeQueryNoResult(
-                    this.errorService, 
                     Queries.DeleteUserById, true, 
                     updateDate, userId, 
                     Statuses.NotActive, 
                     id, Statuses.Active),
                 SqlHelper.executeQueryNoResult(
-                    this.errorService,
                     Queries.DeleteRolesOfUser, true,
                     updateDate, userId,
                     Statuses.NotActive,
@@ -151,3 +143,5 @@ export class UserService implements IUserService {
         return [AddRolesExtended, params];
     }
 }
+
+export default new UserService();
