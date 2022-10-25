@@ -1,7 +1,6 @@
-import { StoredProcedures } from "../constants";
-import { employeeOfStore, employeeType, entityWithId, storeType, systemError } from "../entities";
-import { SqlHelper } from "../helpers/sql.helper";
-import { ErrorService } from "./error.service";
+import { StoredProcedures } from "../../constants";
+import { employeeOfStore, employeeType, entityWithId, storeType, systemError } from "../../entities";
+import { SqlHelper } from "../../core/helpers/sql.helper";
 
 interface IEmployeeService {
     getAll(storeId: number): Promise<employeeOfStore[]>;
@@ -19,19 +18,16 @@ interface localEmployee {
 
 // TODO: not to create repeated code for each employee/product/store services, we can create abstract class 
 // abstract class with basic functionality and extend it for each services
-export class EmployeeService implements IEmployeeService {
+class EmployeeService implements IEmployeeService {
     
-    // TODO: will it work same?
-    private errorService: ErrorService;
-    constructor(errorService: ErrorService) {
-        this.errorService = errorService;
+    constructor() {
     }
 
     public getAll(storeId: number): Promise<employeeOfStore[]> {
         return new Promise<employeeOfStore[]>((resolve, reject) => {
             const result: employeeOfStore[] = [];
 
-            SqlHelper.executeSpArrayResult<localEmployee>(this.errorService, StoredProcedures.AllEmployeesByStore, storeId)
+            SqlHelper.executeSpArrayResult<localEmployee>(StoredProcedures.AllEmployeesByStore, storeId)
             .then((queryResult: localEmployee[]) => {
                 queryResult.forEach((employee: localEmployee) => {
                     result.push(this.parseLocalEmployee(employee))
@@ -47,7 +43,7 @@ export class EmployeeService implements IEmployeeService {
         return new Promise<employeeOfStore[]>((resolve, reject) => {
             const result: employeeOfStore[] = [];
 
-            SqlHelper.executeSpArrayResult<localEmployee>(this.errorService, StoredProcedures.EmployeeById, id)
+            SqlHelper.executeSpArrayResult<localEmployee>(StoredProcedures.EmployeeById, id)
             .then((queryResult: localEmployee[]) => {
                 queryResult.forEach((employee: localEmployee) => {
                     result.push(this.parseLocalEmployee(employee))
@@ -62,7 +58,6 @@ export class EmployeeService implements IEmployeeService {
     public update(employee: employeeType, userId: number): Promise<employeeType> {
         return new Promise<employeeType>((resolve, reject) => {
             SqlHelper.executeSpNoResult(
-                this.errorService,
                 StoredProcedures.UpdateEmployee, false, 
                 employee.id, 
                 employee.firstName,
@@ -81,7 +76,6 @@ export class EmployeeService implements IEmployeeService {
         return new Promise<employeeOfStore>((resolve, reject) => {
 
             SqlHelper.executeSpCreateNew(
-                this.errorService, 
                 StoredProcedures.CreateEmployee, employee,
                 employee.firstName, employee.lastName,
                 employee.position, employee.storeName,
@@ -99,7 +93,6 @@ export class EmployeeService implements IEmployeeService {
             const updateDate: Date = new Date();
 
             SqlHelper.executeSpNoResult(
-                this.errorService, 
                 StoredProcedures.DeleteEmployee, true,
                 id, userId)
             .then(() => {
@@ -119,3 +112,5 @@ export class EmployeeService implements IEmployeeService {
         }
     }
 }
+
+export default new EmployeeService();
