@@ -5,7 +5,9 @@ import express, { Express } from "express";
 import { RouteConfig } from "./framework/routes.config";
 import { StoreRoutes } from "./modules/store/store.routes";
 import { AuthenticationRoutes } from "./core/authentication/authentication.routes";
-import { UserRoutes } from "./modules/user/user.route";
+import { UserRoutes } from "./modules/user/user.routes";
+import { RoleRoutes } from "./modules/role/role.routes";
+import { EmployeeRoutes } from "./modules/employee/employee.routes";
 
 const routes: Array<RouteConfig> = [];
 const app: Express = express();
@@ -19,21 +21,18 @@ app.use(cors());
 
 const PORT: number = 7777;
 
-// will be neede when we add environment
+// will be needed when we add environment
 // if (process.env.DEBUG) {
 //   process.on("unhandledRejection", (reason) => {
 //     process.exit(1);
 //   });
 // } 
 
-// routes.push(new UserRoutes(app));
-routes.push(new StoreRoutes(app));
 routes.push(new AuthenticationRoutes(app));
 routes.push(new UserRoutes(app));
-
-// app.get("/", (req: Request, res: Response) => {
-//   res.send("Welcome world")
-// });
+routes.push(new RoleRoutes(app));
+routes.push(new StoreRoutes(app));
+routes.push(new EmployeeRoutes(app));
 
 const server: http.Server = http.createServer(app);
 

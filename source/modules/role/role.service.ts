@@ -1,10 +1,9 @@
-import { Queries } from "../constants";
-import { entityWithId, roleType, systemError } from "../entities";
-import { SqlHelper } from "../helpers/sql.helper";
-import { Statuses } from '../enums';
+import { Queries } from "../../constants";
+import { entityWithId, roleType, systemError } from "../../entities";
+import { SqlHelper } from "../../core/helpers/sql.helper";
+import { Statuses } from '../../enums';
 import _ from 'underscore';
-import { ErrorService } from "./error.service";
-import { DateHelper } from "../framework/date.helpers";
+import { DateHelper } from "../../framework/date.helpers";
 
 interface IRoleService {
     getAll(): Promise<roleType[]>;
@@ -18,17 +17,16 @@ interface localRoleType {
     role_name: string;
 }
 
-export class RoleService implements IRoleService {
+class RoleService implements IRoleService {
 
-    constructor(private errorService: ErrorService) {
-
+    constructor() {
     }
 
     public getAll(): Promise<roleType[]> {
         return new Promise<roleType[]>((resolve, reject) => {
             const result: roleType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localRoleType>(this.errorService, Queries.GetRoles, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localRoleType>(Queries.GetRoles, Statuses.Active)
             .then((queryResult: localRoleType[]) => {
                 queryResult.forEach((role: localRoleType) => {
                     result.push(this.parseLocalrole(role))
@@ -43,7 +41,6 @@ export class RoleService implements IRoleService {
         return new Promise<roleType>((resolve, reject) => {
             const updateDate: string = DateHelper.dateToString(new Date());
             SqlHelper.executeQueryNoResult(
-                this.errorService,
                 Queries.UpdateRole, false, 
                 role.roleName, 
                 updateDate,
@@ -64,7 +61,6 @@ export class RoleService implements IRoleService {
             const createDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.createNew(
-                this.errorService,
                 Queries.AddRole, role,
                 role.roleName,
                 createDate, createDate,
@@ -83,7 +79,6 @@ export class RoleService implements IRoleService {
             const updateDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.executeQueryNoResult(
-                this.errorService, 
                 Queries.DeleteRole, true, 
                 updateDate, userId, Statuses.NotActive,
                 id, Statuses.Active)
@@ -101,3 +96,5 @@ export class RoleService implements IRoleService {
         }
     }
 }
+
+export default new RoleService();

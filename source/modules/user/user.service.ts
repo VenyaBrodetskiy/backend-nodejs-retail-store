@@ -10,7 +10,7 @@ interface IUserService {
     add(user: user, userId: number): Promise<user>;
     deleteById(id: number, userId: number): Promise<void>;
 }
-export class UserService implements IUserService {
+class UserService implements IUserService {
     
     constructor() {
 
