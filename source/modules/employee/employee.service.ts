@@ -1,5 +1,5 @@
-import { StoredProcedures } from "../../constants";
-import { employeeOfStore, employeeType, entityWithId, storeType, systemError } from "../../entities";
+import { StoredProcedures } from "./employee.queries";
+import { employeeOfStore, employeeType, entityWithId, storeType, systemError } from "../../common/entities";
 import { SqlHelper } from "../../core/helpers/sql.helper";
 
 interface IEmployeeService {

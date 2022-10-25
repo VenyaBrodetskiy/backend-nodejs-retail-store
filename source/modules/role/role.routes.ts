@@ -2,7 +2,7 @@ import { RouteConfig } from '../../framework/routes.config';
 import { Application } from "express"
 import RoleController from "./role.controller"
 import AuthMiddleware from '../../core/middleware/auth.middleware';
-import { Role } from '../../enums';
+import { Role } from '../../common/enums';
 
 export class RoleRoutes extends RouteConfig {
     

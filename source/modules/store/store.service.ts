@@ -1,9 +1,9 @@
-import { Queries } from "../../constants";
-import { entityWithId, storeType, systemError } from "../../entities";
+import { entityWithId, storeType, systemError } from "../../common/entities";
 import { SqlHelper } from "../../core/helpers/sql.helper";
-import { Statuses } from '../../enums';
+import { Statuses } from '../../common/enums';
 import _ from 'underscore';
 import { DateHelper } from "../../framework/date.helpers";
+import { StoreQueries } from "./store.queries";
 
 interface IStoreService {
     getAllStores(): Promise<storeType[]>;
@@ -32,7 +32,7 @@ class StoreService implements IStoreService {
         return new Promise<storeType[]>((resolve, reject) => {
             const result: storeType[] = [];          
             
-            SqlHelper.executeQueryArrayResult<localStoreType>(Queries.AllStores, Statuses.Active)
+            SqlHelper.executeQueryArrayResult<localStoreType>(StoreQueries.AllStores, Statuses.Active)
             .then((queryResult: localStoreType[]) => {
                 queryResult.forEach((store: localStoreType) => {
                     result.push(this.parseLocalStore(store))
@@ -46,7 +46,7 @@ class StoreService implements IStoreService {
     public getStoreById(id: number): Promise<storeType> {
         return new Promise<storeType>((resolve, reject) => {    
             
-            SqlHelper.executeQuerySingleResult<localStoreType>(Queries.StoreById, id, Statuses.Active)
+            SqlHelper.executeQuerySingleResult<localStoreType>(StoreQueries.StoreById, id, Statuses.Active)
             .then((queryResult: localStoreType) => {
                 resolve(this.parseLocalStore(queryResult))
             })
@@ -56,7 +56,7 @@ class StoreService implements IStoreService {
 
     public getStoreByTitle(title: string): Promise<storeType[]> {
         return new Promise<storeType[]>((resolve, reject) => {
-            SqlHelper.executeQueryArrayResult<localStoreType>(Queries.StoreByTitle, `%${title}%`)
+            SqlHelper.executeQueryArrayResult<localStoreType>(StoreQueries.StoreByTitle, `%${title}%`)
                 .then((queryResult: localStoreType[]) => {
                     resolve(_.map(queryResult, (result: localStoreType) => this.parseLocalStore(result)));
                 })
@@ -70,7 +70,7 @@ class StoreService implements IStoreService {
         return new Promise<storeType>((resolve, reject) => {
             const updateDate: Date = new Date();
             SqlHelper.executeQueryNoResult(
-                Queries.UpdateStoreById, false, 
+                StoreQueries.UpdateStoreById, false, 
                 store.name, 
                 store.address, 
                 store.openDate, 
@@ -93,7 +93,7 @@ class StoreService implements IStoreService {
             const createDate: string = DateHelper.dateToString(new Date());
 
             SqlHelper.createNew(
-                Queries.AddNewStore, store,
+                StoreQueries.AddNewStore, store,
                 store.name, store.address, store.openDate, store.scale,
                 createDate, createDate,
                 userId, userId,
@@ -111,7 +111,7 @@ class StoreService implements IStoreService {
             const updateDate: Date = new Date();
 
             SqlHelper.executeQueryNoResult(
-                Queries.DeleteStore, true, 
+                StoreQueries.DeleteStore, true, 
                 DateHelper.dateToString(updateDate), userId, Statuses.NotActive,
                 id, Statuses.Active)
             .then(() => {

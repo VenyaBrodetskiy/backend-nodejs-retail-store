@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { NON_EXISTING_ID } from "../../constants";
+import { NON_EXISTING_ID } from "../../common/constants";
 import { AcessHelper } from "../../core/helpers/access.helper";
 import { RequestHelper } from "../../core/helpers/request.helpers";
 import { ResponseHelper } from "../../core/helpers/response.helper";
-import { AuthenticatedRequest, storeType, systemError } from "../../entities";
-import { Role } from "../../enums";
+import { AuthenticatedRequest, storeType, systemError } from "../../common/entities";
+import { Role } from "../../common/enums";
 import StoreService from './store.service';
 
 class StoreController {

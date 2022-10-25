@@ -1,6 +1,6 @@
-import { NON_EXISTING_ID } from "../../constants";
-import { RoleType, systemError } from "../../entities";
-import { AppError, Role } from "../../enums";
+import { NON_EXISTING_ID } from "../../common/constants";
+import { RoleType, systemError } from "../../common/entities";
+import { AppError, Role } from "../../common/enums";
 import ErrorService from "../error.service";
 
 export class RequestHelper {

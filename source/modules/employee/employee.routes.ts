@@ -2,7 +2,7 @@ import { RouteConfig } from '../../framework/routes.config';
 import { Application } from "express"
 import AuthMiddleware from '../../core/middleware/auth.middleware';
 import EmployeeController from './employee.controller';
-import { Role } from '../../enums';
+import { Role } from '../../common/enums';
 
 export class EmployeeRoutes extends RouteConfig {
     

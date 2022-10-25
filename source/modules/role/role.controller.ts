@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestHelper } from "../../core/helpers/request.helpers";
 import { ResponseHelper } from "../../core/helpers/response.helper";
-import { AuthenticatedRequest, roleType, systemError, user } from "../../entities";
-import { NON_EXISTING_ID } from "../../constants";
+import { AuthenticatedRequest, roleType, systemError, user } from "../../common/entities";
+import { NON_EXISTING_ID } from "../../common/constants";
 import RoleService from "./role.service";
 
 class RoleController {

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestHelper } from "../../core/helpers/request.helpers";
 import { ResponseHelper } from "../../core/helpers/response.helper";
-import { AuthenticatedRequest, systemError, user } from "../../entities";
-import { AppError } from "../../enums";
+import { AuthenticatedRequest, systemError, user } from "../../common/entities";
+import { AppError } from "../../common/enums";
 import UserService from "./user.service";
 import ErrorService from "../../core/error.service";
 import bcrypt from 'bcryptjs';
-import { NON_EXISTING_ID } from "../../constants";
+import { NON_EXISTING_ID } from "../../common/constants";
 
 class UserController {
 

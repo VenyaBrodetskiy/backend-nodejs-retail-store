@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestHelper } from "../../core/helpers/request.helpers";
 import { ResponseHelper } from "../../core/helpers/response.helper";
-import { AuthenticatedRequest, employeeOfStore, employeeType, systemError, user } from "../../entities";
-import { NON_EXISTING_ID } from "../../constants";
+import { AuthenticatedRequest, employeeOfStore, employeeType, systemError, user } from "../../common/entities";
+import { NON_EXISTING_ID } from "../../common/constants";
 import EmployeeService from "./employee.service";
-import { Role } from "../../enums";
+import { Role } from "../../common/enums";
 import { AcessHelper } from "../../core/helpers/access.helper";
 
 class EmployeeController {

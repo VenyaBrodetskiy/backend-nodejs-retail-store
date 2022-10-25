@@ -1,6 +1,6 @@
 import { Dictionary } from "underscore";
-import { systemError } from "../entities";
-import { AppError } from "../enums";
+import { systemError } from "../common/entities";
+import { AppError } from "../common/enums";
 
 interface IErrorService {
     getError(key: AppError): systemError;

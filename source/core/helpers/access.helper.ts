@@ -1,5 +1,5 @@
-import { Queries } from "../../constants";
-import { Role, Statuses } from "../../enums";
+import { Queries } from "../../common/constants";
+import { Role, Statuses } from "../../common/enums";
 import { SqlHelper } from "./sql.helper";
 
 interface localUserName {

@@ -1,8 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { TOKEN_SECRET } from "../../constants";
-import { Role } from "../../enums";
-import { AuthenticatedRequest, jwtUserData } from "../../entities";
+import { TOKEN_SECRET } from "../../common/constants";
+import { Role } from "../../common/enums";
+import { AuthenticatedRequest, jwtUserData } from "../../common/entities";
 
 interface jwtBase {
     userData: jwtUserData;

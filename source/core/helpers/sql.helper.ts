@@ -1,8 +1,8 @@
 import { Connection, SqlClient, Error, Query, ProcedureManager } from "msnodesqlv8";
-import { DB_CONNECTION_STRING, Queries } from "../../constants";
-import { systemError, entityWithId } from "../../entities";
+import { DB_CONNECTION_STRING, Queries } from "../../common/constants";
+import { systemError, entityWithId } from "../../common/entities";
 import ErrorService from "../error.service";
-import { AppError } from "../../enums";
+import { AppError } from "../../common/enums";
 
 export class SqlHelper {
     static sql: SqlClient = require("msnodesqlv8");
