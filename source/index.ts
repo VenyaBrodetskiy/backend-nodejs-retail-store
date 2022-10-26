@@ -37,8 +37,8 @@ routes.push(new EmployeeRoutes(app));
 const server: http.Server = http.createServer(app);
 
 server.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
   routes.forEach((route: RouteConfig) => {
     console.log(`Routes configured for ${route.getName()}`)
-  })
+  });
+  console.log(`Server is running on ${PORT}`);
 })

@@ -19,7 +19,26 @@ interface localRoleType {
 
 class RoleService implements IRoleService {
 
+    public Roles: roleType[] = [];
+    // [
+    //     { 
+    //         roleName: "AccessAdministrator",
+    //         id: 1
+    //     },
+    //     {
+    //         roleName: "RegularUser",
+    //         id: 2
+    //     }
+    // ];
+    
     constructor() {
+        this.getAll()
+            .then((result: roleType[]) => {
+                this.Roles = result;
+            })
+            .catch((error: systemError) => {
+                console.log(error.key, error.message);
+            })
     }
 
     public getAll(): Promise<roleType[]> {
