@@ -35,6 +35,7 @@ class RoleService implements IRoleService {
         this.getAll()
             .then((result: roleType[]) => {
                 this.Roles = result;
+                // this line runs after routes are established, so it don't help
             })
             .catch((error: systemError) => {
                 console.log(error.key, error.message);
