@@ -16,26 +16,24 @@ class UserService implements IUserService {
 
     }
 
-    // this is same as
-    // constructor(errorService: ErrorService) {
-    //    this.errorService = ErrorService
-    // }
-
     public updateById(user: user, userId: number): Promise<user> {
         return new Promise<user>((resolve, reject) => {
             const updateDate: string = DateHelper.dateToString(new Date());
 
             const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(user, updateDate, userId);
             Promise.all([
+                // delete old roles of user (table: user_to_role)
                 SqlHelper.executeQueryNoResult(
                     UserQueries.DeleteRolesOfUser, true,
                     updateDate, userId,
                     Statuses.NotActive,
                     user.id, Statuses.Active),
+                // adds new roles to user (table: user_to_role)
                 SqlHelper.executeQueryNoResult(
                     AddRolesExtended as string, false, 
                     ...roleParams, 
                     ),
+                // updates other user property except roles (table: user)
                 SqlHelper.executeQueryNoResult(
                     UserQueries.UpdateUserById, false, 
                     user.firstName, user.lastName, 
@@ -64,17 +62,14 @@ class UserService implements IUserService {
                 
                 const [AddRolesExtended, roleParams] = this.prepareQueryToAddRoles(result as user, createDate, userId);
 
-                SqlHelper.executeQueryNoResult(
+                return SqlHelper.executeQueryNoResult(
                     AddRolesExtended as string, false, 
                     ...roleParams, 
                     createDate, createDate, 
                     userId, userId, 
-                    Statuses.Active)
-                return (result as user);
+                    Statuses.Active), (result as user);
 
-                // TODO: code below was refactored to send just 1 request instead of many
-                // TODO: ask Ilya. I can't make correct error handling here due to loop I guess. How can improve? 
-                // probably in future will need to use Promises inside loops..    
+                // code below was refactored to send just 1 request instead of many (not to fight witrh asyncs in a loop)
                 /* 
                 for (const role of roles) {                   
                     SqlHelper.executeQueryNoResult(
