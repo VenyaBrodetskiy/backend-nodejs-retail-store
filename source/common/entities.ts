@@ -20,7 +20,7 @@ export interface storeType extends entityWithId {
     name: string;
     address: string;
     openDate: string;
-    scale: number;
+    scale: string;
 }
 
 export interface employeeType extends entityWithId{
