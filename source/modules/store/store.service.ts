@@ -19,7 +19,7 @@ interface localStoreType {
     store_name: string;
     store_address: string;
     opening_date: string;
-    scale: number;
+    scale: string;
 }
 
 class StoreService implements IStoreService {
