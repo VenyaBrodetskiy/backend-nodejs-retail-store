@@ -31,7 +31,7 @@ export class AcessHelper {
 
         const isUserStoreManager = userRoles.indexOf(Role.StoreManager) > -1;
         if (isUserStoreManager) {
-            const storeManagerStores: number[] = await this.getStoreManagerStores(userId);
+            const storeManagerStores: number[] = await this.getStoreManagersStores(userId);
 
             const isChangingOwnStore: boolean = storeManagerStores.indexOf(storeId) > -1;
             
@@ -57,6 +57,7 @@ export class AcessHelper {
 
     /**
      * Store manager allowed to change employyes of it's own store
+     * Cashiers allowed to change only what they added
      */
     public static async isUserHasAccessToEmployee(res: Response, userId: number, userRoles: number[], employeeId: number) {
 
@@ -66,7 +67,7 @@ export class AcessHelper {
         const isUserStoreManager = userRoles.indexOf(Role.StoreManager) > -1;
         if (isUserStoreManager) {
             
-            const storeManagerStores: number[] = await this.getStoreManagerStores(userId);
+            const storeManagerStores: number[] = await this.getStoreManagersStores(userId);
 
             const employeeStoresObj: localStoreId[] = await SqlHelper.executeQueryArrayResult(
                 Queries.GetStoresOfEmployee,
@@ -102,7 +103,7 @@ export class AcessHelper {
     
     }
 
-    private static async getStoreManagerStores(userId: number): Promise<number[]> {
+    private static async getStoreManagersStores(userId: number): Promise<number[]> {
         const storeManagerName: localUserName = await SqlHelper.executeQuerySingleResult(
             Queries.GetUserNameById, userId);
 
