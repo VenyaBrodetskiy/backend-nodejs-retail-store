@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestHelper } from "../../core/helpers/request.helpers";
 import { ResponseHelper } from "../../core/helpers/response.helper";
-import { AuthenticatedRequest, employeeOfStore, employeeType, systemError, user } from "../../common/entities";
+import { AuthenticatedRequest, employeeOfStore, employeeType, systemError } from "../../common/entities";
 import { NON_EXISTING_ID } from "../../common/constants";
 import EmployeeService from "./employee.service";
 import { Role } from "../../common/enums";
@@ -78,7 +78,7 @@ class EmployeeController {
             const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
             
             const isUserHasAccess: boolean = await AcessHelper.isUserHasAccessToEmployee(
-                userId, userRoles, employeeId)
+                res, userId, userRoles, employeeId)
             
             if (!isUserHasAccess) {
                     return res.sendStatus(401);
@@ -139,7 +139,7 @@ class EmployeeController {
             const userRoles: Role[] = (req as AuthenticatedRequest).userData.rolesId;
             
             const isUserHasAccess: boolean = await AcessHelper.isUserHasAccessToEmployee(
-                userId, userRoles, employeeId)
+                res, userId, userRoles, employeeId)
             
             if (!isUserHasAccess) {
                     return res.sendStatus(401);

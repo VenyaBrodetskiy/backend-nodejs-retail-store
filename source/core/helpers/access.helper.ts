@@ -1,6 +1,9 @@
 import { Queries } from "../../common/constants";
+import { Response } from "express";
 import { Role, Statuses } from "../../common/enums";
 import { SqlHelper } from "./sql.helper";
+import { ResponseHelper } from "./response.helper";
+import { systemError } from "../../common/entities";
 
 interface localUserName {
     first_name: string,
@@ -18,7 +21,7 @@ interface localCreateUser {
 export class AcessHelper {
     /**
      * Store manager allowed to change only it's own store
-     * Cashiers allowed to change only 
+     * Cashiers allowed to change only what they added
      */
      public static async isUserHasAccessToStore(userId: number, userRoles: number[], storeId: number) {
         
@@ -55,7 +58,7 @@ export class AcessHelper {
     /**
      * Store manager allowed to change employyes of it's own store
      */
-    public static async isUserHasAccessToEmployee(userId: number, userRoles: number[], employeeId: number) {
+    public static async isUserHasAccessToEmployee(res: Response, userId: number, userRoles: number[], employeeId: number) {
 
         const isUserNetworkAdministrator = userRoles.indexOf(Role.NetworkAdministrator) > -1;
         if (isUserNetworkAdministrator) return true;
@@ -81,12 +84,18 @@ export class AcessHelper {
 
         const isUserCashier = userRoles.indexOf(Role.Cashier) > -1;
         if (isUserCashier) {
-            const createdUser: localCreateUser = await SqlHelper.executeQuerySingleResult(
-                Queries.GetCreatedUserOfEmployee, employeeId, Statuses.Active);
-            
-            if (createdUser.create_user_id === userId) {
-                return true;
+            try {
+                const createdUser: localCreateUser = await SqlHelper.executeQuerySingleResult(
+                    Queries.GetCreatedUserOfEmployee, employeeId, Statuses.Active);
+                if (createdUser.create_user_id === userId) {
+                    return true;
+                }
             }
+            catch (error) {
+                ResponseHelper.handleError(res, error as systemError);
+            }
+            
+            
             return false;
         }
         return true;

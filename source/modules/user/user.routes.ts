@@ -11,7 +11,11 @@ export class UserRoutes extends RouteConfig {
     }
 
     configureRoutes() {
-        this.app.route(`/user/`).post([
+        this.app.route(`/user`).get([
+            AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
+            UserController.getAll]);
+
+        this.app.route(`/user`).post([
             AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
             UserController.add]);
 

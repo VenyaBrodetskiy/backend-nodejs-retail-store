@@ -5,7 +5,15 @@ import { Role, Statuses } from '../../common/enums';
 import { DateHelper } from '../../framework/date.helpers';
 import { UserQueries } from './user.queries';
 
+interface localUser {
+    id: number;
+    first_name: string;
+    last_name: string;
+    login: string;
+    role_name: string | string[];
+}
 interface IUserService {
+    getAll(): Promise<user[]>;
     updateById(user: user, userId: number): Promise<user>;
     add(user: user, userId: number): Promise<user>;
     deleteById(id: number, userId: number): Promise<void>;
@@ -14,6 +22,31 @@ class UserService implements IUserService {
     
     constructor() {
 
+    }
+
+    public getAll(): Promise<user[]> {
+        return new Promise<user[]>((resolve, reject) => {
+            const result: user[] = [];          
+            
+            SqlHelper.executeQueryArrayResult<localUser>(UserQueries.GetAll, Statuses.Active, Statuses.Active, Statuses.Active)
+            .then((queryResult: localUser[]) => {
+                queryResult.reduce((prevUser: localUser, currUser: localUser, index: number) => {
+                    if (prevUser.id === currUser.id) {
+                        if (typeof prevUser.role_name == 'string') prevUser.role_name = [prevUser.role_name as string];
+                        prevUser.role_name.push(currUser.role_name as string);
+                        if (index === queryResult.length - 1) result.push(this.parseUser(prevUser));
+                        return prevUser;
+                    }
+                    else {
+                        result.push(this.parseUser(prevUser));
+                        if (index === queryResult.length - 1) result.push(this.parseUser(currUser));
+                        return currUser;
+                    }
+                });
+                resolve(result);
+            })
+            .catch((error: systemError) => reject(error));
+        });
     }
 
     public updateById(user: user, userId: number): Promise<user> {
@@ -28,11 +61,6 @@ class UserService implements IUserService {
                     updateDate, userId,
                     Statuses.NotActive,
                     user.id, Statuses.Active),
-                // adds new roles to user (table: user_to_role)
-                SqlHelper.executeQueryNoResult(
-                    AddRolesExtended as string, false, 
-                    ...roleParams, 
-                    ),
                 // updates other user property except roles (table: user)
                 SqlHelper.executeQueryNoResult(
                     UserQueries.UpdateUserById, false, 
@@ -40,6 +68,13 @@ class UserService implements IUserService {
                     updateDate, userId, 
                     user.id, Statuses.Active)
             ])
+            .then(() => {
+                // adds new roles to user (table: user_to_role)
+                return SqlHelper.executeQueryNoResult(
+                    AddRolesExtended as string, false, 
+                    ...roleParams, 
+                    );
+            })
             .then(() => {
                 resolve(user);
             })
@@ -116,6 +151,17 @@ class UserService implements IUserService {
 
             
         });
+    }
+
+    private parseUser(localUser: localUser): user {
+        if (typeof localUser.role_name === 'string') localUser.role_name = [localUser.role_name];
+        return {
+            id: localUser.id,
+            firstName: localUser.first_name,
+            lastName: localUser.last_name,
+            login: localUser.login,
+            roles: localUser.role_name
+        }
     }
 
     private prepareQueryToAddRoles(user: user, createDate: string, userId: number): (string | (string | number)[])[] {

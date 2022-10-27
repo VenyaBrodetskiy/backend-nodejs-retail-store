@@ -12,6 +12,16 @@ class UserController {
 
     constructor() {}
 
+    public getAll(req: Request, res: Response, next: NextFunction) {
+        UserService.getAll()
+            .then((result: user[]) => {
+                return res.status(200).json(result);
+            })
+            .catch((error: systemError) => {
+                return ResponseHelper.handleError(res, error);
+            })
+    }
+
     public updateById(req: Request, res: Response, next: NextFunction) {
 
         const numericParamOrError: number | systemError = RequestHelper.parseNumericInput(req.params.id);
