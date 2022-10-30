@@ -8,6 +8,7 @@ import { AuthenticationRoutes } from "./core/authentication/authentication.route
 import { UserRoutes } from "./modules/user/user.routes";
 import { RoleRoutes } from "./modules/role/role.routes";
 import { EmployeeRoutes } from "./modules/employee/employee.routes";
+import LoggerService from "./core/logger.service";
 
 const routes: Array<RouteConfig> = [];
 const app: Express = express();
@@ -38,7 +39,7 @@ const server: http.Server = http.createServer(app);
 
 server.listen(PORT, () => {
   routes.forEach((route: RouteConfig) => {
-    console.log(`Routes configured for ${route.getName()}`)
+    LoggerService.info(`Routes configured for ${route.getName()}`)
   });
-  console.log(`Server is running on ${PORT}`);
+  LoggerService.info(`Server is running on ${PORT}`);
 })

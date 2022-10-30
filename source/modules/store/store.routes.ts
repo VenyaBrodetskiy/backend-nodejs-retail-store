@@ -7,33 +7,33 @@ import AuthMiddleware from '../../core/middleware/auth.middleware';
 export class StoreRoutes extends RouteConfig {
     
     constructor(app: Application) {
-        super(app, "StoreRoutes");
+        super(app, "StoreRoutes", "store");
     }
 
      public configureRoutes() {
         // get requests
-        this.app.route(`/store`).get([
+        this.app.route(`/${this.baseUrl}`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.getAllStores]);
 
-        this.app.route(`/store/:id`).get([
+        this.app.route(`/${this.baseUrl}/:id`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.getStoreById]);
 
-        this.app.route(`/store/by-title/:title`).get([
+        this.app.route(`/${this.baseUrl}/by-title/:title`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.getStoreByTitle]);
 
         // put, post, delete
-        this.app.route(`/store/:id`).put([
+        this.app.route(`/${this.baseUrl}/:id`).put([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.updateStoreById]);
 
-        this.app.route(`/store`).post([
+        this.app.route(`/${this.baseUrl}`).post([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.addNewStore]);
 
-        this.app.route(`/store/:id`).delete([
+        this.app.route(`/${this.baseUrl}/:id`).delete([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             SchoolController.deleteStore]);
 

@@ -30,3 +30,4 @@ export const DB_CONNECTION_STRING: string = "server=.;Database=retail_store;Trus
 export const NON_EXISTING_ID: number = -1;
 export const TEMP_USER_ID: number = 1;
 export const TOKEN_SECRET: string = '1382d946-516b-44fa-bb35-4ac3ad5b2c12'; // generated from google with GUID generator https://www.guidgenerator.com/
+export const DEFAULT_LOG_FOLDER: string = "logs";

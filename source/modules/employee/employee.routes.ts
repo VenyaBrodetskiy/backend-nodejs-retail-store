@@ -7,32 +7,32 @@ import { Role } from '../../common/enums';
 export class EmployeeRoutes extends RouteConfig {
     
     constructor(app: Application) {
-        super(app, "EmployeeRoutes");
+        super(app, "EmployeeRoutes", "employee");
     }
 
     configureRoutes() {
         
-        this.app.route(`/employee`).get([
+        this.app.route(`/${this.baseUrl}`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.getAll]);
 
-        this.app.route(`/employee/by-store-id/:id`).get([
+        this.app.route(`/${this.baseUrl}/by-store-id/:id`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.getAllByStoreId]);
             
-        this.app.route(`/employee/:id`).get([
+        this.app.route(`/${this.baseUrl}/:id`).get([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.getOne]);
 
-        this.app.route(`/employee/:id`).put([
+        this.app.route(`/${this.baseUrl}/:id`).put([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.update]);
 
-        this.app.route(`/employee`).post([
+        this.app.route(`/${this.baseUrl}`).post([
             AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.add]);
 
-        this.app.route(`/employee/:id`).delete(
+        this.app.route(`/${this.baseUrl}/:id`).delete(
             [AuthMiddleware.verifyToken([Role.NetworkAdministrator, Role.Cashier, Role.StoreManager]), 
             EmployeeController.del]);
 

@@ -7,24 +7,24 @@ import { Role } from '../../common/enums';
 export class RoleRoutes extends RouteConfig {
     
     constructor(app: Application) {
-        super(app, "RoleRoutes");
+        super(app, "RoleRoutes", "role");
     }
 
     configureRoutes() {
 
-        this.app.route(`/role`).get([
+        this.app.route(`/${this.baseUrl}`).get([
             AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
             RoleController.getAll]);
 
-        this.app.route(`/role`).post([
+        this.app.route(`/${this.baseUrl}`).post([
             AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
             RoleController.add]);
 
-        this.app.route(`/role/:id`).put([
+        this.app.route(`/${this.baseUrl}/:id`).put([
             AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
             RoleController.updateById]);
 
-        this.app.route(`/role/:id`).delete([
+        this.app.route(`/${this.baseUrl}/:id`).delete([
             AuthMiddleware.verifyToken([Role.AccessAdministrator]), 
             RoleController.deleteById]);
 
