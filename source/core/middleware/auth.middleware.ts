@@ -1,8 +1,8 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { TOKEN_SECRET } from "../../common/constants";
 import { Role } from "../../common/enums";
 import { AuthenticatedRequest, jwtUserData } from "../../common/entities";
+import { Environment } from "../helpers/env.helper";
 
 interface jwtBase {
     userData: jwtUserData;
@@ -21,7 +21,7 @@ class AuthMiddleware {
     
         try {
             token = token.substring("Bearer ".length);
-            const decoded: string | JwtPayload = jwt.verify(token, TOKEN_SECRET);
+            const decoded: string | JwtPayload = jwt.verify(token, Environment.TOKEN_SECRET);
             const intersectionRoles: number[] = (decoded as jwtBase).userData.rolesId.filter(role => roles.includes(role)); 
             if (intersectionRoles.length === 0) {
                 return res.sendStatus(401);

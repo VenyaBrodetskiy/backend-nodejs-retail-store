@@ -1,3 +1,4 @@
+import { Environment } from "./core/helpers/env.helper";
 import * as http from "http";
 import cors from "cors";
 import morgan from "morgan";
@@ -10,6 +11,8 @@ import { RoleRoutes } from "./modules/role/role.routes";
 import { EmployeeRoutes } from "./modules/employee/employee.routes";
 import LoggerService from "./core/logger.service";
 
+LoggerService.init();
+
 const routes: Array<RouteConfig> = [];
 const app: Express = express();
 
@@ -19,8 +22,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use(cors());
-
-const PORT: number = 7777;
 
 // will be needed when we add environment
 // if (process.env.DEBUG) {
@@ -37,9 +38,9 @@ routes.push(new EmployeeRoutes(app));
 
 const server: http.Server = http.createServer(app);
 
-server.listen(PORT, () => {
+server.listen(Environment.SERVER_PORT, () => {
   routes.forEach((route: RouteConfig) => {
     LoggerService.info(`Routes configured for ${route.getName()}`)
   });
-  LoggerService.info(`Server is running on ${PORT}`);
+  LoggerService.info(`Server is running on ${Environment.SERVER_PORT}`);
 })

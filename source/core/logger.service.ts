@@ -1,6 +1,6 @@
 import log4js, { Logger } from "log4js";
 import path from "path";
-import { DEFAULT_LOG_FOLDER } from "../common/constants";
+import { Environment } from "./helpers/env.helper";
 
 interface ILoggerService {
     error(message?: any, ...optionalParams: any[]): void;
@@ -13,9 +13,12 @@ interface ILoggerService {
 
 class LoggerService implements ILoggerService {
 
-    private _logger: Logger;
+    private _logger: Logger = {} as any;
 
     constructor() {
+    }
+
+    public init() {
         
         log4js.configure({
             appenders: {
@@ -24,7 +27,7 @@ class LoggerService implements ILoggerService {
                 },
                 file: {
                     type: "dateFile",
-                    filename: path.join(DEFAULT_LOG_FOLDER, "backend-nodejs.log"),
+                    filename: path.join(Environment.DEFAULT_LOG_FOLDER, "backend-nodejs.log"),
                     keepFileExt: true,
                     numBackups: 7,
                     compress: true
