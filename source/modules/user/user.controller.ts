@@ -12,6 +12,7 @@ class UserController {
 
     constructor() {}
 
+    
     public getAll(req: Request, res: Response, next: NextFunction) {
         UserService.getAll()
             .then((result: user[]) => {

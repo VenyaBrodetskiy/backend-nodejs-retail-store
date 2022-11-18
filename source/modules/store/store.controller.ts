@@ -46,16 +46,16 @@ class StoreController {
     }
     
     // SQL injection made by sending the following as a parameter: <' OR 1=1 -- >
-    public getStoreByTitle(req: Request, res: Response, next: NextFunction) {
+    public async getStoreByTitle(req: Request, res: Response, next: NextFunction) {
         let title: string = req.params.title;
         
-        StoreService.getStoreByTitle(title)
-            .then((result: storeType[]) => {
-                return res.status(200).json(result);
-            })
-            .catch((error: systemError) => {
-                return ResponseHelper.handleError(res, error);
-            });
+        try {
+            const result: storeType[] =  await StoreService.getStoreByTitle(title)
+            return res.status(200).json(result);
+        }
+        catch(error) {
+            return ResponseHelper.handleError(res, error as systemError);
+        }
     };
     
     public async updateStoreById(req: Request, res: Response, next: NextFunction) {

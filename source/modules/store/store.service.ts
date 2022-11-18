@@ -54,16 +54,15 @@ class StoreService implements IStoreService {
         });
     }
 
-    public getStoreByTitle(title: string): Promise<storeType[]> {
-        return new Promise<storeType[]>((resolve, reject) => {
-            SqlHelper.executeQueryArrayResult<localStoreType>(StoreQueries.StoreByTitle, `%${title}%`)
-                .then((queryResult: localStoreType[]) => {
-                    resolve(_.map(queryResult, (result: localStoreType) => this.parseLocalStore(result)));
-                })
-                .catch((error: systemError) => {
-                    reject(error);
-                });
-        });
+    public async getStoreByTitle(title: string): Promise<storeType[]> {
+        try {
+            const queryResult: localStoreType[] = await SqlHelper.executeQueryArrayResult<localStoreType>(StoreQueries.StoreByTitle, `%${title}%`)
+            return (_.map(queryResult, (result: localStoreType) => this.parseLocalStore(result)));
+
+        } 
+        catch (error) {
+            throw(error as systemError);
+        }
     }
 
     public updateStoreById(store: storeType, userId: number): Promise<storeType> {
